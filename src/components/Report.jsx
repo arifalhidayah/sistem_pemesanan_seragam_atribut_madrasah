@@ -80,38 +80,38 @@ export default function Report() {
   return (
     <div className="max-w-7xl mx-auto space-y-8 pb-12 px-2 sm:px-4">
       <div className="md:flex md:items-center md:justify-between px-2">
-        <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight">Laporan & Rekapitulasi</h1>
-          <p className="mt-1 text-slate-500">Ringkasan keuangan dan rincian pesanan MI Darun Najah Srobyong.</p>
+        <div className="flex-1 min-w-0">
+          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight break-words">Laporan & Rekapitulasi</h1>
+          <p className="mt-1 text-sm text-slate-500 break-words">Ringkasan keuangan dan rincian pesanan MI Darun Najah.</p>
         </div>
-        <div className="mt-6 md:mt-0 flex flex-col sm:flex-row gap-3">
-          <button onClick={handlePrintTailor} className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-white border-2 border-slate-200 text-slate-700 font-bold rounded-2xl hover:bg-slate-50 transition-all shadow-sm active:scale-95 text-sm">
-            <Scissors className="w-5 h-5" /> Data Penjahit
+        <div className="mt-6 md:mt-0 flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+          <button onClick={handlePrintTailor} className="flex-1 min-w-0 flex items-center justify-center gap-2 px-3 sm:px-6 py-3 sm:py-4 bg-white border-2 border-slate-200 text-slate-700 font-bold rounded-2xl hover:bg-slate-50 transition-all shadow-sm active:scale-95 text-xs sm:text-sm">
+            <Scissors className="w-4 h-4 shrink-0" /> <span className="truncate">Data Penjahit</span>
           </button>
-          <button onClick={handlePrint} className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-emerald-600 text-white font-black rounded-2xl hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-100 active:scale-95 text-sm">
-            <Printer className="w-5 h-5" /> Laporan Keuangan
+          <button onClick={handlePrint} className="flex-1 min-w-0 flex items-center justify-center gap-2 px-3 sm:px-6 py-3 sm:py-4 bg-emerald-600 text-white font-black rounded-2xl hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-100 active:scale-95 text-xs sm:text-sm">
+            <Printer className="w-4 h-4 shrink-0" /> <span className="truncate">Laporan Keuangan</span>
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-2">
-        <div className="bg-white p-6 sm:p-8 rounded-3xl border-2 border-slate-100 shadow-sm relative overflow-hidden group">
-          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-125 transition-transform"><TrendingUp className="w-12 sm:w-16 h-12 sm:h-16 text-emerald-600" /></div>
-          <div className="text-[10px] sm:text-sm font-black text-slate-400 uppercase tracking-widest mb-2">Total Pendapatan</div>
-          <div className="text-2xl sm:text-3xl font-black text-emerald-600 tracking-tight">Rp {financialSummary.totalRevenue.toLocaleString('id-ID')}</div>
-          <div className="text-[10px] sm:text-xs font-bold text-slate-400 mt-2">Uang yang sudah masuk (Lunas & DP)</div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 px-2 w-full">
+        <div className="bg-white p-4 sm:p-8 rounded-3xl border-2 border-slate-100 shadow-sm relative overflow-hidden group min-w-0">
+          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-125 transition-transform"><TrendingUp className="w-10 h-10 text-emerald-600" /></div>
+          <div className="text-[10px] sm:text-sm font-black text-slate-400 uppercase tracking-wide mb-1 sm:mb-2 truncate">Total Pendapatan</div>
+          <div className="text-xl sm:text-3xl font-black text-emerald-600 tracking-tight truncate">Rp {financialSummary.totalRevenue.toLocaleString('id-ID')}</div>
+          <div className="text-[9px] sm:text-xs font-bold text-slate-400 mt-1 sm:mt-2 truncate">Sudah masuk (Lunas & DP)</div>
         </div>
-        <div className="bg-white p-6 sm:p-8 rounded-3xl border-2 border-slate-100 shadow-sm relative overflow-hidden group">
-          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-125 transition-transform"><TrendingDown className="w-12 sm:w-16 h-12 sm:h-16 text-red-600" /></div>
-          <div className="text-[10px] sm:text-sm font-black text-slate-400 uppercase tracking-widest mb-2">Total Piutang</div>
-          <div className="text-2xl sm:text-3xl font-black text-red-500 tracking-tight">Rp {financialSummary.totalReceivables.toLocaleString('id-ID')}</div>
-          <div className="text-[10px] sm:text-xs font-bold text-slate-400 mt-2">Estimasi tagihan yang belum dibayarkan</div>
+        <div className="bg-white p-4 sm:p-8 rounded-3xl border-2 border-slate-100 shadow-sm relative overflow-hidden group min-w-0">
+          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-125 transition-transform"><TrendingDown className="w-10 h-10 text-red-600" /></div>
+          <div className="text-[10px] sm:text-sm font-black text-slate-400 uppercase tracking-wide mb-1 sm:mb-2 truncate">Total Piutang</div>
+          <div className="text-xl sm:text-3xl font-black text-red-500 tracking-tight truncate">Rp {financialSummary.totalReceivables.toLocaleString('id-ID')}</div>
+          <div className="text-[9px] sm:text-xs font-bold text-slate-400 mt-1 sm:mt-2 truncate">Tagihan belum bayar</div>
         </div>
-        <div className="bg-slate-900 p-6 sm:p-8 rounded-3xl shadow-2xl relative overflow-hidden group">
-          <div className="absolute top-0 right-0 p-4 opacity-20"><Users className="w-12 sm:w-16 h-12 sm:h-16 text-white" /></div>
-          <div className="text-[10px] sm:text-sm font-black text-slate-400 uppercase tracking-widest mb-2">Estimasi Total</div>
-          <div className="text-2xl sm:text-3xl font-black text-white tracking-tight">Rp {financialSummary.totalExpected.toLocaleString('id-ID')}</div>
-          <div className="text-[10px] sm:text-xs font-bold text-slate-300 mt-2">Target total pemasukan koperasi</div>
+        <div className="bg-slate-900 p-4 sm:p-8 rounded-3xl shadow-2xl relative overflow-hidden group min-w-0">
+          <div className="absolute top-0 right-0 p-4 opacity-20"><Users className="w-10 h-10 text-white" /></div>
+          <div className="text-[10px] sm:text-sm font-black text-slate-400 uppercase tracking-wide mb-1 sm:mb-2 truncate">Estimasi Total</div>
+          <div className="text-xl sm:text-3xl font-black text-white tracking-tight truncate">Rp {financialSummary.totalExpected.toLocaleString('id-ID')}</div>
+          <div className="text-[9px] sm:text-xs font-bold text-slate-300 mt-1 sm:mt-2 truncate">Target pemasukan koperasi</div>
         </div>
       </div>
 
@@ -136,17 +136,17 @@ export default function Report() {
                     const sizes = Array.from(new Set(cat.items.filter(i => i.type === typeName).map(i => i.name)));
                     return (
                       <div key={typeName} className="bg-white rounded-3xl border-2 border-slate-100 overflow-hidden shadow-sm">
-                        <div className="bg-slate-50 px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-                          <h3 className="font-black text-slate-800 uppercase tracking-wide text-sm">{typeName}</h3>
-                          <span className="bg-emerald-600 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase">Pemesanan Aktif</span>
+                        <div className="bg-slate-50 px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-100 flex items-center justify-between">
+                          <h3 className="font-black text-slate-800 uppercase tracking-wide text-[11px] sm:text-sm truncate mr-2">{typeName}</h3>
+                          <span className="bg-emerald-600 text-white text-[8px] sm:text-[10px] font-black px-2 sm:px-3 py-1 rounded-full uppercase whitespace-nowrap">Pemesanan Aktif</span>
                         </div>
                         <div className="overflow-x-auto">
                           <table className="min-w-full text-sm">
                             <thead>
                               <tr className="bg-slate-50/50">
-                                <th className="px-3 sm:px-6 py-4 text-left font-black text-slate-400 uppercase tracking-widest text-[9px] sm:text-[10px]">Gender</th>
-                                {sizes.map(s => <th key={s} className="px-2 sm:px-4 py-4 text-center font-black text-slate-400 uppercase tracking-widest text-[9px] sm:text-[10px]">{s}</th>)}
-                                <th className="px-3 sm:px-6 py-4 text-right font-black text-slate-800 bg-slate-100 uppercase tracking-widest text-[9px] sm:text-[10px]">Total</th>
+                                <th className="px-3 sm:px-6 py-4 text-left font-black text-slate-400 uppercase tracking-widest text-[9px] sm:text-[10px] whitespace-nowrap">Gender</th>
+                                {sizes.map(s => <th key={s} className="px-2 sm:px-4 py-4 text-center font-black text-slate-400 uppercase tracking-widest text-[9px] sm:text-[10px] whitespace-nowrap">{s}</th>)}
+                                <th className="px-3 sm:px-6 py-4 text-right font-black text-slate-800 bg-slate-100 uppercase tracking-widest text-[9px] sm:text-[10px] whitespace-nowrap">Total</th>
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">

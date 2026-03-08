@@ -74,7 +74,7 @@ export default function Layout() {
       {/* Main Content */}
       <main className="flex-1 flex flex-col pb-16 md:pb-0">
         {/* Mobile Header */}
-        <header className="md:hidden sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-slate-200 px-4 py-3 flex justify-between items-center">
+        <header className="md:hidden sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-slate-200 px-4 py-3 flex justify-between items-center w-full max-w-full overflow-hidden">
           <div className="flex items-center gap-2 text-emerald-600">
             <Package className="h-5 w-5" />
             <h1 className="text-lg font-black tracking-tight">Koperasi MI</h1>
