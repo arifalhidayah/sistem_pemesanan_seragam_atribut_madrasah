@@ -78,8 +78,8 @@ export default function Report() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 pb-12 px-2 sm:px-4">
-      <div className="md:flex md:items-center md:justify-between px-2">
+    <div className="w-full space-y-8 pb-12">
+      <div className="md:flex md:items-center md:justify-between">
         <div className="flex-1 min-w-0">
           <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight break-words">Laporan & Rekapitulasi</h1>
           <p className="mt-1 text-sm text-slate-500 break-words">Ringkasan keuangan dan rincian pesanan MI Darun Najah.</p>
@@ -94,7 +94,7 @@ export default function Report() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 px-2 w-full">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
         <div className="bg-white p-4 sm:p-8 rounded-3xl border-2 border-slate-100 shadow-sm relative overflow-hidden group min-w-0">
           <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-125 transition-transform"><TrendingUp className="w-10 h-10 text-emerald-600" /></div>
           <div className="text-[10px] sm:text-sm font-black text-slate-400 uppercase tracking-wide mb-1 sm:mb-2 truncate">Total Pendapatan</div>
@@ -122,9 +122,9 @@ export default function Report() {
 
           return (
             <div key={cat.id}>
-              <h2 className="text-xl font-black text-slate-800 mb-6 flex items-center gap-3 px-2">
-                <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-sm ${cat.type === 'grouped' ? 'bg-emerald-600' : 'bg-blue-600'}`}>{catIdx + 1}</div>
-                {cat.name}
+              <h2 className="text-lg sm:text-xl font-black text-slate-800 mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3">
+                <div className={`w-7 h-7 sm:w-8 sm:h-8 shrink-0 rounded-lg flex items-center justify-center text-white font-bold text-sm ${cat.type === 'grouped' ? 'bg-emerald-600' : 'bg-blue-600'}`}>{catIdx + 1}</div>
+                <span className="truncate">{cat.name}</span>
               </h2>
 
               {!hasData ? (
@@ -135,30 +135,30 @@ export default function Report() {
                   {Object.entries(stats).map(([typeName, data]) => {
                     const sizes = Array.from(new Set(cat.items.filter(i => i.type === typeName).map(i => i.name)));
                     return (
-                      <div key={typeName} className="bg-white rounded-3xl border-2 border-slate-100 overflow-hidden shadow-sm">
-                        <div className="bg-slate-50 px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-100 flex items-center justify-between">
-                          <h3 className="font-black text-slate-800 uppercase tracking-wide text-[11px] sm:text-sm truncate mr-2">{typeName}</h3>
-                          <span className="bg-emerald-600 text-white text-[8px] sm:text-[10px] font-black px-2 sm:px-3 py-1 rounded-full uppercase whitespace-nowrap">Pemesanan Aktif</span>
+                      <div key={typeName} className="bg-white rounded-2xl border-2 border-slate-100 overflow-hidden shadow-sm">
+                        <div className="bg-slate-50 px-3 py-2 border-b border-slate-100 flex items-center gap-2">
+                          <h3 className="font-black text-slate-800 uppercase tracking-wide text-[10px] sm:text-sm flex-1 min-w-0 truncate">{typeName}</h3>
+                          <span className="bg-emerald-600 text-white text-[8px] font-black px-2 py-0.5 rounded-full uppercase shrink-0">Aktif</span>
                         </div>
                         <div className="overflow-x-auto">
                           <table className="min-w-full text-sm">
                             <thead>
                               <tr className="bg-slate-50/50">
-                                <th className="px-3 sm:px-6 py-4 text-left font-black text-slate-400 uppercase tracking-widest text-[9px] sm:text-[10px] whitespace-nowrap">Gender</th>
-                                {sizes.map(s => <th key={s} className="px-2 sm:px-4 py-4 text-center font-black text-slate-400 uppercase tracking-widest text-[9px] sm:text-[10px] whitespace-nowrap">{s}</th>)}
-                                <th className="px-3 sm:px-6 py-4 text-right font-black text-slate-800 bg-slate-100 uppercase tracking-widest text-[9px] sm:text-[10px] whitespace-nowrap">Total</th>
+                                <th className="px-2 py-3 text-left font-black text-slate-400 uppercase tracking-wide text-[9px] whitespace-nowrap">Gender</th>
+                                {sizes.map(s => <th key={s} className="px-2 py-3 text-center font-black text-slate-400 uppercase tracking-wide text-[9px] whitespace-nowrap">{s}</th>)}
+                                <th className="px-2 py-3 text-right font-black text-slate-800 bg-slate-100 uppercase tracking-wide text-[9px] whitespace-nowrap">Total</th>
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
                               {['Putra', 'Putri'].map(gender => (
                                 <tr key={gender} className="hover:bg-slate-50/50 transition-colors">
-                                  <td className={`px-3 sm:px-6 py-4 font-black text-xs sm:text-sm ${gender === 'Putra' ? 'text-blue-600' : 'text-pink-600'}`}>{gender}</td>
+                                  <td className={`px-2 py-3 font-black text-xs ${gender === 'Putra' ? 'text-blue-600' : 'text-pink-600'}`}>{gender}</td>
                                   {sizes.map(s => (
-                                    <td key={s} className="px-2 sm:px-4 py-4 text-center font-bold text-slate-600 text-xs sm:text-sm">
+                                    <td key={s} className="px-2 py-3 text-center font-bold text-slate-600 text-xs">
                                       {data.genderStats[gender][s] || 0}
                                     </td>
                                   ))}
-                                  <td className="px-3 sm:px-6 py-4 text-right font-black text-slate-800 bg-slate-50/50 text-xs sm:text-sm">
+                                  <td className="px-2 py-3 text-right font-black text-slate-800 bg-slate-50/50 text-xs">
                                     {sizes.reduce((sum, s) => sum + (data.genderStats[gender][s] || 0), 0)}
                                   </td>
                                 </tr>
@@ -166,13 +166,13 @@ export default function Report() {
                             </tbody>
                             <tfoot className="bg-slate-900 text-white">
                               <tr>
-                                <td className="px-3 sm:px-6 py-4 font-black text-xs sm:text-sm">TOTAL UNIT</td>
+                                <td className="px-2 py-3 font-black text-xs">TOTAL</td>
                                 {sizes.map(s => (
-                                  <td key={s} className="px-2 sm:px-4 py-4 text-center font-black text-emerald-400 text-sm sm:text-lg">
+                                  <td key={s} className="px-2 py-3 text-center font-black text-emerald-400 text-sm">
                                     {(data.genderStats.Putra[s] || 0) + (data.genderStats.Putri[s] || 0)}
                                   </td>
                                 ))}
-                                <td className="px-3 sm:px-6 py-4 text-right font-black text-lg sm:text-2xl text-white">
+                                <td className="px-2 py-3 text-right font-black text-lg text-white">
                                   {data.count}
                                 </td>
                               </tr>
@@ -206,15 +206,51 @@ export default function Report() {
       </div>
 
       {/* Rincian Transaksi Per Petugas */}
-      <div className="bg-white rounded-3xl border-2 border-slate-100 overflow-hidden shadow-sm mt-12">
-        <div className="bg-slate-900 px-6 py-6 flex items-center justify-between">
-          <div>
-            <h2 className="text-xl font-black text-white tracking-tight">Riwayat Transaksi Masuk</h2>
-            <p className="text-slate-400 text-xs mt-1 uppercase tracking-widest font-bold">Data Real-time per Petugas</p>
+      <div className="bg-white rounded-3xl border-2 border-slate-100 overflow-hidden shadow-sm mt-8">
+        <div className="bg-slate-900 px-4 sm:px-6 py-4 flex items-center justify-between">
+          <div className="min-w-0">
+            <h2 className="text-base sm:text-xl font-black text-white tracking-tight">Riwayat Transaksi</h2>
+            <p className="text-slate-400 text-[10px] mt-0.5 uppercase tracking-wide font-bold">per Petugas</p>
           </div>
-          <FileText className="w-8 h-8 text-emerald-400 opacity-50" />
+          <FileText className="w-6 h-6 text-emerald-400 opacity-50 shrink-0" />
         </div>
-        <div className="overflow-x-auto">
+
+        {/* Mobile Card View */}
+        <div className="md:hidden divide-y divide-slate-100">
+          {orders.flatMap(order =>
+            (order.paymentHistory || []).map((payment, pIdx) => ({
+              ...payment,
+              studentName: order.studentName,
+              guardianName: order.guardianName,
+              orderId: order.id,
+              key: `${order.id}-${pIdx}`
+            }))
+          )
+          .sort((a, b) => new Date(b.date) - new Date(a.date))
+          .map((trx) => (
+            <div key={trx.key} className="px-4 py-3 flex items-center justify-between gap-3">
+              <div className="flex-1 min-w-0">
+                <div className="text-sm font-black text-slate-800 truncate">{trx.studentName}</div>
+                <div className="text-[10px] text-slate-400 truncate">Wali: {trx.guardianName}</div>
+                <div className="text-[10px] text-slate-400 mt-0.5">
+                  {new Date(trx.date).toLocaleDateString('id-ID', { dateStyle: 'short' })} · {new Date(trx.date).toLocaleTimeString('id-ID', { timeStyle: 'short' })}
+                </div>
+              </div>
+              <div className="text-right shrink-0">
+                <div className="font-black text-emerald-600 text-sm">Rp {trx.amount.toLocaleString('id-ID')}</div>
+                <span className="inline-block mt-1 px-2 py-0.5 bg-slate-100 text-slate-700 rounded-full text-[9px] font-black uppercase border border-slate-200">
+                  {trx.receivedBy?.split(' ')[0] || '-'}
+                </span>
+              </div>
+            </div>
+          ))}
+          {orders.every(o => !o.paymentHistory || o.paymentHistory.length === 0) && (
+            <div className="px-4 py-8 text-center text-slate-400 italic text-sm">Belum ada transaksi.</div>
+          )}
+        </div>
+
+        {/* Desktop Table View */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="min-w-full divide-y divide-slate-200">
             <thead className="bg-slate-50">
               <tr>
@@ -225,7 +261,7 @@ export default function Report() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-slate-100">
-              {orders.flatMap(order => 
+              {orders.flatMap(order =>
                 (order.paymentHistory || []).map((payment, pIdx) => ({
                   ...payment,
                   studentName: order.studentName,
@@ -237,19 +273,19 @@ export default function Report() {
               .sort((a, b) => new Date(b.date) - new Date(a.date))
               .map((trx) => (
                 <tr key={trx.key} className="hover:bg-slate-50/50 transition-colors">
-                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-[11px] sm:text-sm text-slate-500">
-                    <div className="font-bold sm:font-normal">{new Date(trx.date).toLocaleDateString('id-ID', { dateStyle: 'short' })}</div>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
+                    <div>{new Date(trx.date).toLocaleDateString('id-ID', { dateStyle: 'short' })}</div>
                     <div className="text-[10px] opacity-75">{new Date(trx.date).toLocaleTimeString('id-ID', { timeStyle: 'short' })}</div>
                   </td>
-                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
-                    <div className="text-xs sm:text-sm font-bold text-slate-800 truncate max-w-[100px] sm:max-w-none">{trx.studentName}</div>
-                    <div className="text-[9px] sm:text-[11px] text-slate-400 font-medium truncate max-w-[100px] sm:max-w-none">Wali: {trx.guardianName}</div>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm font-bold text-slate-800">{trx.studentName}</div>
+                    <div className="text-[11px] text-slate-400">Wali: {trx.guardianName}</div>
                   </td>
-                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-right font-black text-emerald-600 text-xs sm:text-base">
+                  <td className="px-6 py-4 whitespace-nowrap text-right font-black text-emerald-600">
                     Rp {trx.amount.toLocaleString('id-ID')}
                   </td>
-                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-center">
-                    <span className="px-2 sm:px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-tight border border-slate-200">
+                  <td className="px-6 py-4 whitespace-nowrap text-center">
+                    <span className="px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-[10px] font-black uppercase tracking-tight border border-slate-200">
                       {trx.receivedBy?.split(' ')[0] || '-'}
                     </span>
                   </td>
@@ -264,6 +300,7 @@ export default function Report() {
           </table>
         </div>
       </div>
+
     </div>
   );
 }

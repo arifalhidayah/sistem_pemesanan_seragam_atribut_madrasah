@@ -30,7 +30,7 @@ export default function Layout() {
   ];
 
   return (
-    <div className="flex min-h-screen bg-slate-50 w-full overflow-x-hidden">
+    <div className="flex min-h-screen bg-slate-50 w-screen overflow-x-hidden">
       {/* Sidebar */}
       <aside className="w-64 bg-white border-r border-slate-200 flex flex-col hidden md:flex">
         <div className="p-6 border-b border-slate-200">
@@ -72,7 +72,7 @@ export default function Layout() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col pb-16 md:pb-0">
+      <main className="flex-1 min-w-0 w-0 flex flex-col pb-16 md:pb-0">
         {/* Mobile Header */}
         <header className="md:hidden sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-slate-200 px-4 py-3 flex justify-between items-center w-full max-w-full overflow-hidden">
           <div className="flex items-center gap-2 text-emerald-600">
@@ -90,7 +90,7 @@ export default function Layout() {
           </div>
         </header>
 
-        <div className="flex-1 p-3 sm:p-6 lg:p-8 overflow-x-hidden overflow-y-auto">
+        <div className="flex-1 min-w-0 p-3 sm:p-6 lg:p-8 overflow-x-hidden overflow-y-auto">
           <Outlet />
         </div>
 
