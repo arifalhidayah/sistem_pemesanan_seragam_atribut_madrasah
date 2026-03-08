@@ -84,12 +84,12 @@ export default function Report() {
           <h1 className="text-3xl font-black text-slate-900 tracking-tight">Laporan & Rekapitulasi</h1>
           <p className="mt-1 text-slate-500">Ringkasan keuangan dan rincian pesanan MI Darun Najah Srobyong.</p>
         </div>
-        <div className="mt-6 md:mt-0 flex flex-col sm:flex-row gap-4">
-          <button onClick={handlePrintTailor} className="flex items-center justify-center gap-2 px-6 py-3 bg-white border-2 border-slate-200 text-slate-700 font-bold rounded-2xl hover:bg-slate-50 transition-all shadow-sm active:scale-95">
-            <Scissors className="w-5 h-5" /> Data Penjahit (Nota Produksi)
+        <div className="mt-6 md:mt-0 flex flex-col sm:flex-row gap-3">
+          <button onClick={handlePrintTailor} className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-white border-2 border-slate-200 text-slate-700 font-bold rounded-2xl hover:bg-slate-50 transition-all shadow-sm active:scale-95 text-sm">
+            <Scissors className="w-5 h-5" /> Data Penjahit
           </button>
-          <button onClick={handlePrint} className="flex items-center justify-center gap-2 px-6 py-3 bg-emerald-600 text-white font-black rounded-2xl hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-100 active:scale-95">
-            <Printer className="w-5 h-5" /> Laporan Keuangan Lengkap
+          <button onClick={handlePrint} className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-emerald-600 text-white font-black rounded-2xl hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-100 active:scale-95 text-sm">
+            <Printer className="w-5 h-5" /> Laporan Keuangan
           </button>
         </div>
       </div>

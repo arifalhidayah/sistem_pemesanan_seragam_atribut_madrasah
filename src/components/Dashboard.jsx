@@ -105,7 +105,81 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="flex flex-col">
+      {/* Mobile Card View */}
+      <div className="md:hidden space-y-4">
+        {loadingOrders ? (
+          <div className="bg-white p-8 text-center text-sm text-slate-500 rounded-xl border border-slate-200">
+            Memuat data pesanan...
+          </div>
+        ) : filteredOrders.length === 0 ? (
+          <div className="bg-white p-8 text-center text-sm text-slate-500 rounded-xl border border-slate-200">
+            Tidak ada data pesanan.
+          </div>
+        ) : (
+          filteredOrders.map((order) => (
+            <div key={order.id} className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+              <div className="flex justify-between items-start">
+                <div>
+                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">Siswa</div>
+                  <div className="text-lg font-black text-slate-900 leading-tight">{order.studentName}</div>
+                  <div className="text-sm font-medium text-slate-500">{order.gender} • {order.createdAt?.toDate().toLocaleDateString('id-ID')}</div>
+                </div>
+                <div>{getStatusBadge(order.status)}</div>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4 py-3 border-y border-slate-50">
+                  <div>
+                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Biaya</div>
+                    <div className="text-sm font-black text-slate-900">Rp {order.grandTotal?.toLocaleString('id-ID')}</div>
+                  </div>
+                  <div>
+                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Sisa Tagihan</div>
+                    <div className={`text-sm font-black ${order.remaining > 0 ? 'text-red-600' : 'text-emerald-600'}`}>
+                      {order.remaining > 0 ? `Rp ${order.remaining.toLocaleString('id-ID')}` : 'LUNAS'}
+                    </div>
+                  </div>
+              </div>
+
+              <div className="flex items-center justify-between gap-2 pt-1">
+                <div className="flex -space-x-2">
+                   {/* Mini preview for items if needed or just guardian */}
+                   <div className="text-xs text-slate-500 font-medium">Wali: <span className="text-slate-900 font-bold">{order.guardianName}</span></div>
+                </div>
+                <div className="flex gap-2">
+                   <button
+                     onClick={() => handleWhatsApp(order)}
+                     disabled={isProcessingWA === order.id}
+                     className={`p-2.5 rounded-xl border transition-all ${isProcessingWA === order.id ? 'bg-slate-50 text-slate-300' : 'bg-emerald-50 border-emerald-100 text-emerald-600 active:scale-95'}`}
+                   >
+                     <MessageSquare className="w-5 h-5" />
+                   </button>
+                   <button
+                     onClick={() => navigate(`/edit-order/${order.id}`)}
+                     className="p-2.5 rounded-xl border bg-blue-50 border-blue-100 text-blue-600 active:scale-95 transition-all"
+                   >
+                     <Edit className="w-5 h-5" />
+                   </button>
+                   <button
+                     onClick={() => handlePrint(order)}
+                     className="p-2.5 rounded-xl border bg-slate-50 border-slate-200 text-slate-600 active:scale-95 transition-all"
+                   >
+                     <Printer className="w-5 h-5" />
+                   </button>
+                   <button
+                     onClick={() => handleDelete(order.id)}
+                     className="p-2.5 rounded-xl border bg-red-50 border-red-100 text-red-500 active:scale-95 transition-all"
+                   >
+                     <Trash2 className="w-5 h-5" />
+                   </button>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Desktop Table View */}
+      <div className="hidden md:flex flex-col">
         <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
           <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
             <div className="shadow-sm overflow-hidden border-b border-slate-200 sm:rounded-xl">

@@ -182,22 +182,22 @@ export default function MasterData() {
           </h1>
           <p className="text-sm text-slate-500 mt-1">Gunakan halaman ini untuk menambah kategori (A, B, C...) dan mengelola isinya.</p>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="flex border border-emerald-200 rounded-lg overflow-hidden bg-white shadow-sm">
-            <button onClick={() => addCategory('grouped')} className="px-4 py-2 text-xs font-bold text-emerald-700 hover:bg-emerald-50 border-r border-emerald-100 flex items-center gap-1.5 transition-colors">
-              <Plus className="w-3.5 h-3.5" /> +Kategori Berjenjang (Seragam)
+        <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+          <div className="flex border border-emerald-200 rounded-xl overflow-hidden bg-white shadow-sm w-full sm:w-auto">
+            <button onClick={() => addCategory('grouped')} className="flex-1 px-3 py-3 text-[10px] font-bold text-emerald-700 hover:bg-emerald-50 border-r border-emerald-100 flex items-center justify-center gap-1.5 transition-colors">
+              <Plus className="w-3 h-3" /> Berjenjang
             </button>
-            <button onClick={() => addCategory('flat')} className="px-4 py-2 text-xs font-bold text-blue-700 hover:bg-blue-50 flex items-center gap-1.5 transition-colors">
-              <Plus className="w-3.5 h-3.5" /> +Kategori Satuan (Atribut)
+            <button onClick={() => addCategory('flat')} className="flex-1 px-3 py-3 text-[10px] font-bold text-blue-700 hover:bg-blue-50 flex items-center justify-center gap-1.5 transition-colors">
+              <Plus className="w-3 h-3" /> Satuan
             </button>
           </div>
           <button
             onClick={handleSave}
             disabled={isSaving}
-            className="flex items-center gap-2 px-5 py-2.5 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 disabled:opacity-50 transition-all shadow-md active:scale-95"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 disabled:opacity-50 transition-all shadow-lg shadow-emerald-100 active:scale-95"
           >
             <Save className="w-5 h-5" />
-            {isSaving ? 'Menyimpan...' : 'Simpan Semua'}
+            <span>{isSaving ? 'Menyimpan...' : 'Simpan Semua'}</span>
           </button>
         </div>
       </div>

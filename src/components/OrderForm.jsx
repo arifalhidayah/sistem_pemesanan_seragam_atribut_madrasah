@@ -437,14 +437,14 @@ export default function OrderForm() {
           </div>
         </div>
 
-        <div className="flex flex-wrap justify-end gap-3 pt-6">
+        <div className="flex flex-col sm:flex-row sm:justify-end gap-3 pt-6 border-t border-slate-100 mt-6">
           <button 
             type="button"
             onClick={handleSaveOnly}
             disabled={isSaving}
-            className="flex items-center gap-2 px-6 py-3 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 transition-all disabled:opacity-50"
+            className="flex items-center justify-center gap-2 px-6 py-4 bg-slate-100 text-slate-700 font-bold rounded-2xl hover:bg-slate-200 transition-all disabled:opacity-50 active:scale-95"
           >
-            <Save className={`w-4 h-4 ${isSaving ? 'animate-spin' : ''}`} />
+            <Save className={`w-5 h-5 ${isSaving ? 'animate-spin' : ''}`} />
             <span>{isSaving ? 'MEMPROSES...' : 'SIMPAN SAJA'}</span>
           </button>
           
@@ -452,9 +452,9 @@ export default function OrderForm() {
             type="button"
             onClick={handleSaveAndPrint}
             disabled={isSaving}
-            className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-all shadow-lg hover:shadow-blue-200 disabled:opacity-50"
+            className="flex items-center justify-center gap-2 px-6 py-4 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 transition-all shadow-lg hover:shadow-blue-200 disabled:opacity-50 active:scale-95"
           >
-            <Printer className={`w-4 h-4 ${isSaving ? 'animate-pulse' : ''}`} />
+            <Printer className={`w-5 h-5 ${isSaving ? 'animate-pulse' : ''}`} />
             <span>{isSaving ? 'MEMPROSES...' : 'SIMPAN & CETAK'}</span>
           </button>
 
@@ -462,9 +462,9 @@ export default function OrderForm() {
             type="button"
             onClick={handleSaveAndWhatsApp}
             disabled={isSaving}
-            className="flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 transition-all shadow-lg hover:shadow-emerald-200 disabled:opacity-50"
+            className="flex items-center justify-center gap-2 px-6 py-4 bg-emerald-600 text-white font-bold rounded-2xl hover:bg-emerald-700 transition-all shadow-lg hover:shadow-emerald-200 disabled:opacity-50 active:scale-95"
           >
-            <MessageSquare className={`w-4 h-4 ${isSaving ? 'animate-bounce' : ''}`} />
+            <MessageSquare className={`w-5 h-5 ${isSaving ? 'animate-bounce' : ''}`} />
             <span>{isSaving ? 'MEMPROSES...' : 'SIMPAN & KIRIM WA'}</span>
           </button>
         </div>

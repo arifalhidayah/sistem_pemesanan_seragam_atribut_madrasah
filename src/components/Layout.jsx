@@ -63,21 +63,53 @@ export default function Layout() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col">
+      <main className="flex-1 flex flex-col pb-16 md:pb-0">
         {/* Mobile Header */}
-        <header className="md:hidden bg-white border-b border-slate-200 p-4 flex justify-between items-center">
+        <header className="md:hidden sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-slate-200 px-4 py-3 flex justify-between items-center">
           <div className="flex items-center gap-2 text-emerald-600">
             <Package className="h-5 w-5" />
-            <h1 className="text-lg font-bold">Koperasi MI</h1>
+            <h1 className="text-lg font-black tracking-tight">Koperasi MI</h1>
           </div>
-          <button onClick={handleLogout} className="p-2 text-red-600">
-            <LogOut className="h-5 w-5" />
-          </button>
+          <div className="flex items-center gap-2">
+             <div className="text-right mr-1">
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter leading-none">Petugas</p>
+                <p className="text-xs font-black text-slate-700 leading-tight truncate max-w-[100px]">{currentUser.displayName || 'Admin'}</p>
+             </div>
+             <button onClick={handleLogout} className="p-2 text-red-500 bg-red-50 rounded-lg">
+               <LogOut className="h-4 w-4" />
+             </button>
+          </div>
         </header>
-        
+
         <div className="flex-1 p-4 sm:p-6 lg:p-8 overflow-auto">
           <Outlet />
         </div>
+
+        {/* Bottom Navigation for Mobile */}
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-2 py-1 flex justify-around items-center z-50 shadow-[0_-4px_10px_rgba(0,0,0,0.03)] pb-safe">
+          <Link to="/" className="flex flex-col items-center gap-0.5 p-2 text-slate-500 hover:text-emerald-600 transition-colors">
+            <Home className="h-5 w-5" />
+            <span className="text-[10px] font-bold uppercase tracking-tighter">Beranda</span>
+          </Link>
+          <Link to="/new-order" className="flex flex-col items-center gap-0.5 p-2 text-slate-500 hover:text-emerald-600 transition-colors">
+            <div className="bg-emerald-600 text-white p-2 rounded-xl -mt-6 shadow-lg shadow-emerald-200 border-2 border-white">
+               <FilePlus className="h-5 w-5" />
+            </div>
+            <span className="text-[10px] font-bold uppercase tracking-tighter mt-1">Pesan</span>
+          </Link>
+          <Link to="/master" className="flex flex-col items-center gap-0.5 p-2 text-slate-500 hover:text-emerald-600 transition-colors">
+            <Package className="h-5 w-5" />
+            <span className="text-[10px] font-bold uppercase tracking-tighter">Barang</span>
+          </Link>
+          <Link to="/report" className="flex flex-col items-center gap-0.5 p-2 text-slate-500 hover:text-emerald-600 transition-colors">
+            <BarChart3 className="h-5 w-5" />
+            <span className="text-[10px] font-bold uppercase tracking-tighter">Laporan</span>
+          </Link>
+          <Link to="/profile" className="flex flex-col items-center gap-0.5 p-2 text-slate-500 hover:text-emerald-600 transition-colors">
+            <User className="h-5 w-5" />
+            <span className="text-[10px] font-bold uppercase tracking-tighter">Profil</span>
+          </Link>
+        </nav>
       </main>
     </div>
   );

@@ -63,6 +63,15 @@ Aplikasi manajemen pemesanan seragam dan atribut sekolah berbasis web yang moder
    npm run dev
    ```
 
+## 🤖 Otomasi Deployment (CI/CD)
+Proyek ini dikonfigurasi dengan GitHub Actions untuk deployment otomatis:
+- **Setiap Push ke `main`**: Aplikasi akan dibangun (`build`) dan di-deploy otomatis ke live hosting.
+- **Setiap Pull Request**: Firebase akan membuat link *Preview* sementara untuk meninjau perubahan.
+
+> [!NOTE]
+> Pastikan Anda telah menambahkan `FIREBASE_SERVICE_ACCOUNT_SISTEM_PEMESANAN_SERAGAM` di **GitHub Secrets** repositori Anda.
+
+
 ## 📱 Penggunaan Mobile (PWA)
 Aplikasi ini mendukung instalasi di perangkat mobile:
 - Di Android (Chrome), pilih menu "Tambahkan ke Layar Utama".
