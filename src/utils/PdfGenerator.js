@@ -358,3 +358,161 @@ export const generateTailorReportPDF = (orders, categoryStats, masterCategories)
     return false;
   }
 };
+/**
+ * Generates a complete financial detail report:
+ * - Financial summary
+ * - Aggregated cost per item type across all students
+ * - Per-student itemized cost table
+ */
+export const generateFinancialDetailReportPDF = (orders, financialSummary) => {
+  try {
+    const doc = new jsPDF();
+
+    // ── Header ──────────────────────────────────────────────────────────────
+    doc.setFontSize(16); doc.setFont("helvetica", "bold");
+    doc.text("LAPORAN KEUANGAN LENGKAP", 105, 15, { align: "center" });
+    doc.setFontSize(10); doc.setFont("helvetica", "normal");
+    doc.text("KOPERASI MI DARUN NAJAH SROBYONG", 105, 21, { align: "center" });
+    doc.text(`Dicetak: ${new Date().toLocaleDateString('id-ID', { dateStyle: 'long' })}`, 105, 27, { align: "center" });
+    doc.line(14, 31, 196, 31);
+
+    let currentY = 38;
+
+    // ── I. Ringkasan Keuangan ────────────────────────────────────────────────
+    doc.setFontSize(11); doc.setFont("helvetica", "bold");
+    doc.text("I. RINGKASAN KEUANGAN", 14, currentY);
+    autoTable(doc, {
+      startY: currentY + 4,
+      body: [
+        ['Total Pemasukan (Lunas + DP)', `Rp ${safeFormat(financialSummary.totalRevenue)}`],
+        ['Total Piutang (Belum Bayar)', `Rp ${safeFormat(financialSummary.totalReceivables)}`],
+        ['Estimasi Pendapatan Kotor', `Rp ${safeFormat(financialSummary.totalExpected)}`],
+        ['Jumlah Pesanan', `${orders.length} pesanan`],
+        ['Lunas', `${orders.filter(o => o.status === 'Lunas').length} pesanan`],
+        ['Belum Lunas', `${orders.filter(o => o.status === 'Belum Lunas').length} pesanan`],
+        ['Belum Bayar', `${orders.filter(o => o.status === 'Belum Bayar').length} pesanan`],
+      ],
+      theme: 'grid',
+      styles: { fontSize: 9 },
+      columnStyles: { 0: { fontStyle: 'bold', cellWidth: 100 }, 1: { halign: 'right' } }
+    });
+    currentY = doc.lastAutoTable.finalY + 12;
+
+    // ── II. Rekapitulasi Biaya Per Item ──────────────────────────────────────
+    doc.setFontSize(11); doc.setFont("helvetica", "bold");
+    doc.text("II. REKAPITULASI BIAYA PER JENIS ITEM", 14, currentY);
+
+    // Aggregate: { itemLabel: { count, totalCost } }
+    const itemAgg = {};
+    orders.forEach(order => {
+      (order.items || []).forEach(item => {
+        const label = item.type ? `${item.type} (${item.name || '-'})` : (item.name || '-');
+        const cat = item.categoryName || 'Lain-lain';
+        const key = `${cat}||${label}`;
+        if (!itemAgg[key]) itemAgg[key] = { label, cat, count: 0, totalCost: 0, price: item.price || 0 };
+        itemAgg[key].count += 1;
+        itemAgg[key].totalCost += (item.price || 0);
+      });
+    });
+
+    const aggRows = Object.values(itemAgg)
+      .sort((a, b) => a.cat.localeCompare(b.cat) || a.label.localeCompare(b.label))
+      .map(r => [
+        r.cat,
+        r.label,
+        `Rp ${safeFormat(r.price)}`,
+        r.count,
+        `Rp ${safeFormat(r.totalCost)}`
+      ]);
+
+    const totalItemCost = Object.values(itemAgg).reduce((s, r) => s + r.totalCost, 0);
+
+    autoTable(doc, {
+      startY: currentY + 4,
+      head: [['Kategori', 'Nama Item', 'Harga Satuan', 'Jml', 'Total Biaya']],
+      body: aggRows,
+      foot: [['', '', '', 'TOTAL', `Rp ${safeFormat(totalItemCost)}`]],
+      theme: 'grid',
+      styles: { fontSize: 8 },
+      headStyles: { fillColor: [4, 120, 87] },
+      footStyles: { fillColor: [15, 23, 42], textColor: 255, fontStyle: 'bold', halign: 'right' },
+      columnStyles: {
+        0: { cellWidth: 35 },
+        1: { cellWidth: 55 },
+        2: { halign: 'right', cellWidth: 35 },
+        3: { halign: 'center', cellWidth: 12 },
+        4: { halign: 'right' }
+      }
+    });
+    currentY = doc.lastAutoTable.finalY + 12;
+
+    // ── III. Rincian Per Siswa ───────────────────────────────────────────────
+    if (currentY > 220) { doc.addPage(); currentY = 20; }
+
+    doc.setFontSize(11); doc.setFont("helvetica", "bold");
+    doc.text("III. RINCIAN BIAYA PER SISWA", 14, currentY);
+
+    const studentRows = [];
+    orders
+      .sort((a, b) => (a.studentName || '').localeCompare(b.studentName || ''))
+      .forEach((order, idx) => {
+        // Student header row
+        studentRows.push([
+          { content: `${idx + 1}. ${order.studentName} (${order.gender})`, colSpan: 5, styles: { fontStyle: 'bold', fillColor: [241, 245, 249] } }
+        ]);
+        // Item rows
+        (order.items || []).forEach(item => {
+          const label = item.type ? `${item.type} (${item.name || '-'})` : (item.name || '-');
+          studentRows.push([
+            '',
+            item.categoryName || '-',
+            label,
+            '',
+            `Rp ${safeFormat(item.price)}`
+          ]);
+        });
+        // Subtotal / Payment rows
+        const paid = (order.grandTotal || 0) - (order.remaining || 0);
+        studentRows.push([
+          '',
+          { content: 'Total', colSpan: 2, styles: { fontStyle: 'bold' } },
+          '',
+          { content: `Rp ${safeFormat(order.grandTotal)}`, styles: { fontStyle: 'bold', halign: 'right' } }
+        ]);
+        studentRows.push([
+          '',
+          { content: 'Sudah Dibayar', colSpan: 2, styles: { textColor: [4, 120, 87] } },
+          '',
+          { content: `Rp ${safeFormat(paid)}`, styles: { textColor: [4, 120, 87], halign: 'right' } }
+        ]);
+        studentRows.push([
+          '',
+          { content: 'Sisa Tagihan', colSpan: 2, styles: { textColor: order.remaining > 0 ? [220, 38, 38] : [4, 120, 87] } },
+          '',
+          { content: `Rp ${safeFormat(order.remaining)}`, styles: { textColor: order.remaining > 0 ? [220, 38, 38] : [4, 120, 87], halign: 'right' } }
+        ]);
+      });
+
+    autoTable(doc, {
+      startY: currentY + 4,
+      head: [['No', 'Kategori', 'Item / Ukuran', 'Status', 'Biaya']],
+      body: studentRows,
+      theme: 'grid',
+      styles: { fontSize: 8 },
+      headStyles: { fillColor: [51, 65, 85] },
+      columnStyles: {
+        0: { cellWidth: 8, halign: 'center' },
+        1: { cellWidth: 35 },
+        2: { cellWidth: 70 },
+        3: { cellWidth: 20, halign: 'center' },
+        4: { halign: 'right' }
+      }
+    });
+
+    doc.save(`Laporan_Keuangan_Lengkap_${new Date().toISOString().slice(0,10)}.pdf`);
+    return true;
+  } catch (error) {
+    console.error("Error generating financial detail report:", error);
+    return false;
+  }
+};

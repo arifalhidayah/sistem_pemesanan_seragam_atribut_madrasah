@@ -63,12 +63,19 @@ export const uploadAndGetWhatsAppLink = async (order, pdfBlob) => {
       ? '62' + order.whatsappNumber.slice(1)
       : order.whatsappNumber;
 
+    const paidAmount = (order.grandTotal || 0) - (order.remaining || 0);
+    const remainingLine = order.remaining > 0
+      ? `*Sisa Tagihan:* Rp ${order.remaining.toLocaleString('id-ID')}%0A`
+      : `*Sisa Tagihan:* _LUNAS_ ✅%0A`;
+
     const message = `*NOTA PEMESANAN KOPERASI MI*%0A` +
       `------------------------------------%0A` +
       `*Wali:* ${order.guardianName}%0A` +
       `*Siswa:* ${order.studentName}%0A` +
       `------------------------------------%0A` +
-      `*Total:* Rp ${order.grandTotal.toLocaleString('id-ID')}%0A` +
+      `*Total Biaya:* Rp ${order.grandTotal.toLocaleString('id-ID')}%0A` +
+      `*Sudah Dibayar:* Rp ${paidAmount.toLocaleString('id-ID')}%0A` +
+      remainingLine +
       `*Status:* ${order.status}%0A` +
       `------------------------------------%0A` +
       `*DOWNLOAD NOTA (GOOGLE DRIVE):*%0A${downloadURL}%0A%0A` +

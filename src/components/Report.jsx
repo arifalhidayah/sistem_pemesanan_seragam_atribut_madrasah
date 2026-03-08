@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { useOrders } from '../context/OrderContext';
 import { useMasterData } from '../context/MasterDataContext';
-import { generateReportPDF, generateTailorReportPDF } from '../utils/PdfGenerator';
-import { Printer, TrendingUp, TrendingDown, Users, Shirt, Scissors, FileText } from 'lucide-react';
+import { generateReportPDF, generateTailorReportPDF, generateFinancialDetailReportPDF } from '../utils/PdfGenerator';
+import { Printer, TrendingUp, TrendingDown, Users, Scissors, FileText, Download } from 'lucide-react';
 
 export default function Report() {
   const { orders, fetchOrders, loadingOrders } = useOrders();
@@ -73,6 +73,10 @@ export default function Report() {
     generateTailorReportPDF(orders, categoryStats, masterCategories);
   };
 
+  const handlePrintFinancialDetail = () => {
+    generateFinancialDetailReportPDF(orders, financialSummary);
+  };
+
   if (loadingOrders || loadingMaster) {
     return <div className="text-center py-20 text-slate-500">Memuat data laporan...</div>;
   }
@@ -88,8 +92,11 @@ export default function Report() {
           <button onClick={handlePrintTailor} className="flex-1 min-w-0 flex items-center justify-center gap-2 px-3 sm:px-6 py-3 sm:py-4 bg-white border-2 border-slate-200 text-slate-700 font-bold rounded-2xl hover:bg-slate-50 transition-all shadow-sm active:scale-95 text-xs sm:text-sm">
             <Scissors className="w-4 h-4 shrink-0" /> <span className="truncate">Data Penjahit</span>
           </button>
-          <button onClick={handlePrint} className="flex-1 min-w-0 flex items-center justify-center gap-2 px-3 sm:px-6 py-3 sm:py-4 bg-emerald-600 text-white font-black rounded-2xl hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-100 active:scale-95 text-xs sm:text-sm">
-            <Printer className="w-4 h-4 shrink-0" /> <span className="truncate">Laporan Keuangan</span>
+          <button onClick={handlePrint} className="flex-1 min-w-0 flex items-center justify-center gap-2 px-3 sm:px-6 py-3 sm:py-4 bg-white border-2 border-slate-200 text-slate-700 font-bold rounded-2xl hover:bg-slate-50 transition-all shadow-sm active:scale-95 text-xs sm:text-sm">
+            <Printer className="w-4 h-4 shrink-0" /> <span className="truncate">Laporan Rekap</span>
+          </button>
+          <button onClick={handlePrintFinancialDetail} className="flex-1 min-w-0 flex items-center justify-center gap-2 px-3 sm:px-6 py-3 sm:py-4 bg-emerald-600 text-white font-black rounded-2xl hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-100 active:scale-95 text-xs sm:text-sm">
+            <Download className="w-4 h-4 shrink-0" /> <span className="truncate">Laporan Keuangan</span>
           </button>
         </div>
       </div>
