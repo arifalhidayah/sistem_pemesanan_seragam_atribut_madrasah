@@ -248,14 +248,14 @@ export default function OrderForm() {
         <button onClick={() => navigate('/')} className="p-2 bg-white rounded-full border border-slate-200 hover:bg-slate-50 shadow-sm transition-colors text-slate-600">
           <ArrowLeft className="w-5 h-5" />
         </button>
-        <h1 className="text-2xl font-bold text-slate-900">
-          {isEditMode ? 'Edit / Pelunasan Pemesanan' : 'Form Pemesanan Koperasi MI'}
+        <h1 className="text-xl sm:text-2xl font-bold text-slate-900 leading-tight">
+          {isEditMode ? 'Edit / Pelunasan' : 'Form Pemesanan'}
         </h1>
       </div>
 
       <div className="space-y-6">
         {/* Data Diri */}
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+        <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200">
           <h2 className="text-lg font-semibold text-slate-800 mb-4 border-b border-slate-100 pb-2">Informasi Siswa</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -296,7 +296,7 @@ export default function OrderForm() {
           <div className="bg-white p-8 text-center text-slate-500 rounded-xl border border-dashed border-slate-200">Memuat rincian pembelian...</div>
         ) : (
           masterCategories.map((cat, catIdx) => (
-            <div key={cat.id} className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+            <div key={cat.id} className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200">
               <h2 className="text-lg font-semibold text-slate-800 mb-4 border-b border-slate-100 pb-2 flex justify-between items-center">
                 <span>{cat.name}</span>
                 <span className="text-sm font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100">
@@ -316,14 +316,14 @@ export default function OrderForm() {
                   ).map(([groupType, items], gIdx) => {
                     const currentSelection = (selectedItemsMap[cat.id] || []).find(i => i.type === groupType);
                     return (
-                      <div key={groupType} className="flex flex-col sm:flex-row sm:items-center justify-between p-3 hover:bg-slate-50 gap-3">
-                        <div className="flex items-center gap-3 flex-1">
+                      <div key={groupType} className="flex flex-col sm:flex-row sm:items-center justify-between p-3 hover:bg-slate-50 gap-2">
+                        <div className="flex flex-wrap items-center gap-2 flex-1 min-w-0">
                           <span className="text-xs font-bold text-slate-400 w-5">{gIdx + 1}.</span>
-                          <label className="text-sm font-medium text-slate-700 flex-1 sm:max-w-[200px] truncate" title={groupType}>{groupType}:</label>
+                          <label className="text-sm font-medium text-slate-700 flex-1 sm:max-w-[150px] md:max-w-[200px] truncate" title={groupType}>{groupType}:</label>
                           <select 
                             value={currentSelection?.id || ''} 
                             onChange={(e) => toggleGroupedSelection(cat.id, groupType, e.target.value)}
-                            className="flex-1 px-3 py-1.5 border border-slate-300 rounded-md text-sm"
+                            className="flex-1 min-w-0 px-2 sm:px-3 py-1.5 border border-slate-300 rounded-md text-sm truncate"
                           >
                             <option value="">-- Tidak Pesan --</option>
                             {items.map(u => (
@@ -331,7 +331,7 @@ export default function OrderForm() {
                             ))}
                           </select>
                         </div>
-                        <div className="text-right font-bold text-slate-800 min-w-[100px] text-sm">
+                        <div className="text-right font-bold text-slate-800 sm:min-w-[100px] text-sm">
                           {currentSelection ? `Rp ${currentSelection.price.toLocaleString('id-ID')}` : '-'}
                         </div>
                       </div>
@@ -370,9 +370,9 @@ export default function OrderForm() {
         )}
 
         {/* Total & Pembayaran */}
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+        <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200">
           <h2 className="text-lg font-semibold text-slate-800 mb-4 border-b border-slate-100 pb-2">Pembayaran</h2>
-          <div className="space-y-3 max-w-sm ml-auto">
+          <div className="space-y-3 w-full sm:max-w-sm sm:ml-auto">
             <div className="flex justify-between items-center text-sm font-medium">
               <span className="text-slate-500">Subtotal</span>
               <span className="text-slate-800 font-bold">Rp {subTotal.toLocaleString('id-ID')}</span>
@@ -421,14 +421,14 @@ export default function OrderForm() {
                   required
                   value={currentPayment === 0 ? '' : formatNumber(currentPayment)} 
                   onChange={(e) => setCurrentPayment(parseNumber(e.target.value))}
-                  className="w-full pl-12 pr-4 py-3 text-right font-black text-2xl text-slate-900 border-2 border-emerald-500 bg-emerald-50/30 rounded-2xl focus:ring-4 focus:ring-emerald-500/20"
+                  className="w-full pl-10 sm:pl-12 pr-4 py-2 sm:py-3 text-right font-black text-xl sm:text-2xl text-slate-900 border-2 border-emerald-500 bg-emerald-50/30 rounded-2xl focus:ring-4 focus:ring-emerald-500/20"
                 />
               </div>
             </div>
 
             <div className="flex justify-between items-center text-sm pt-4 font-bold">
               <span className="text-slate-500">SISA TAGIHAN</span>
-              <span className={remaining > 0 ? 'text-red-500 underline' : 'text-emerald-600'}>Rp {remaining.toLocaleString('id-ID')}</span>
+              <span className={`${remaining > 0 ? 'text-red-500 underline' : 'text-emerald-600'} text-right ml-2`}>Rp {remaining.toLocaleString('id-ID')}</span>
             </div>
             <div className="flex justify-between items-center pt-2">
                <span className="text-xs font-bold text-slate-400">STATUS</span>

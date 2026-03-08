@@ -78,7 +78,7 @@ export default function Report() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 pb-12">
+    <div className="max-w-7xl mx-auto space-y-8 pb-12 px-2 sm:px-4">
       <div className="md:flex md:items-center md:justify-between px-2">
         <div>
           <h1 className="text-3xl font-black text-slate-900 tracking-tight">Laporan & Rekapitulasi</h1>
@@ -94,24 +94,24 @@ export default function Report() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white p-8 rounded-3xl border-2 border-slate-100 shadow-sm relative overflow-hidden group">
-          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-125 transition-transform"><TrendingUp className="w-16 h-16 text-emerald-600" /></div>
-          <div className="text-sm font-black text-slate-400 uppercase tracking-widest mb-2">Total Pendapatan</div>
-          <div className="text-3xl font-black text-emerald-600 tracking-tight">Rp {financialSummary.totalRevenue.toLocaleString('id-ID')}</div>
-          <div className="text-xs font-bold text-slate-400 mt-2">Uang yang sudah masuk (Lunas & DP)</div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-2">
+        <div className="bg-white p-6 sm:p-8 rounded-3xl border-2 border-slate-100 shadow-sm relative overflow-hidden group">
+          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-125 transition-transform"><TrendingUp className="w-12 sm:w-16 h-12 sm:h-16 text-emerald-600" /></div>
+          <div className="text-[10px] sm:text-sm font-black text-slate-400 uppercase tracking-widest mb-2">Total Pendapatan</div>
+          <div className="text-2xl sm:text-3xl font-black text-emerald-600 tracking-tight">Rp {financialSummary.totalRevenue.toLocaleString('id-ID')}</div>
+          <div className="text-[10px] sm:text-xs font-bold text-slate-400 mt-2">Uang yang sudah masuk (Lunas & DP)</div>
         </div>
-        <div className="bg-white p-8 rounded-3xl border-2 border-slate-100 shadow-sm relative overflow-hidden group">
-          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-125 transition-transform"><TrendingDown className="w-16 h-16 text-red-600" /></div>
-          <div className="text-sm font-black text-slate-400 uppercase tracking-widest mb-2">Total Piutang</div>
-          <div className="text-3xl font-black text-red-500 tracking-tight">Rp {financialSummary.totalReceivables.toLocaleString('id-ID')}</div>
-          <div className="text-xs font-bold text-slate-400 mt-2">Estimasi tagihan yang belum dibayarkan</div>
+        <div className="bg-white p-6 sm:p-8 rounded-3xl border-2 border-slate-100 shadow-sm relative overflow-hidden group">
+          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-125 transition-transform"><TrendingDown className="w-12 sm:w-16 h-12 sm:h-16 text-red-600" /></div>
+          <div className="text-[10px] sm:text-sm font-black text-slate-400 uppercase tracking-widest mb-2">Total Piutang</div>
+          <div className="text-2xl sm:text-3xl font-black text-red-500 tracking-tight">Rp {financialSummary.totalReceivables.toLocaleString('id-ID')}</div>
+          <div className="text-[10px] sm:text-xs font-bold text-slate-400 mt-2">Estimasi tagihan yang belum dibayarkan</div>
         </div>
-        <div className="bg-slate-900 p-8 rounded-3xl shadow-2xl relative overflow-hidden group">
-          <div className="absolute top-0 right-0 p-4 opacity-20"><Users className="w-16 h-16 text-white" /></div>
-          <div className="text-sm font-black text-slate-400 uppercase tracking-widest mb-2">Estimasi Total</div>
-          <div className="text-3xl font-black text-white tracking-tight">Rp {financialSummary.totalExpected.toLocaleString('id-ID')}</div>
-          <div className="text-xs font-bold text-slate-300 mt-2">Target total pemasukan koperasi</div>
+        <div className="bg-slate-900 p-6 sm:p-8 rounded-3xl shadow-2xl relative overflow-hidden group">
+          <div className="absolute top-0 right-0 p-4 opacity-20"><Users className="w-12 sm:w-16 h-12 sm:h-16 text-white" /></div>
+          <div className="text-[10px] sm:text-sm font-black text-slate-400 uppercase tracking-widest mb-2">Estimasi Total</div>
+          <div className="text-2xl sm:text-3xl font-black text-white tracking-tight">Rp {financialSummary.totalExpected.toLocaleString('id-ID')}</div>
+          <div className="text-[10px] sm:text-xs font-bold text-slate-300 mt-2">Target total pemasukan koperasi</div>
         </div>
       </div>
 
@@ -144,21 +144,21 @@ export default function Report() {
                           <table className="min-w-full text-sm">
                             <thead>
                               <tr className="bg-slate-50/50">
-                                <th className="px-6 py-4 text-left font-black text-slate-400 uppercase tracking-widest text-[10px]">Gender</th>
-                                {sizes.map(s => <th key={s} className="px-4 py-4 text-center font-black text-slate-400 uppercase tracking-widest text-[10px]">{s}</th>)}
-                                <th className="px-6 py-4 text-right font-black text-slate-800 bg-slate-100 uppercase tracking-widest text-[10px]">Subtotal</th>
+                                <th className="px-3 sm:px-6 py-4 text-left font-black text-slate-400 uppercase tracking-widest text-[9px] sm:text-[10px]">Gender</th>
+                                {sizes.map(s => <th key={s} className="px-2 sm:px-4 py-4 text-center font-black text-slate-400 uppercase tracking-widest text-[9px] sm:text-[10px]">{s}</th>)}
+                                <th className="px-3 sm:px-6 py-4 text-right font-black text-slate-800 bg-slate-100 uppercase tracking-widest text-[9px] sm:text-[10px]">Total</th>
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
                               {['Putra', 'Putri'].map(gender => (
                                 <tr key={gender} className="hover:bg-slate-50/50 transition-colors">
-                                  <td className={`px-6 py-4 font-black ${gender === 'Putra' ? 'text-blue-600' : 'text-pink-600'}`}>{gender}</td>
+                                  <td className={`px-3 sm:px-6 py-4 font-black text-xs sm:text-sm ${gender === 'Putra' ? 'text-blue-600' : 'text-pink-600'}`}>{gender}</td>
                                   {sizes.map(s => (
-                                    <td key={s} className="px-4 py-4 text-center font-bold text-slate-600">
+                                    <td key={s} className="px-2 sm:px-4 py-4 text-center font-bold text-slate-600 text-xs sm:text-sm">
                                       {data.genderStats[gender][s] || 0}
                                     </td>
                                   ))}
-                                  <td className="px-6 py-4 text-right font-black text-slate-800 bg-slate-50/50">
+                                  <td className="px-3 sm:px-6 py-4 text-right font-black text-slate-800 bg-slate-50/50 text-xs sm:text-sm">
                                     {sizes.reduce((sum, s) => sum + (data.genderStats[gender][s] || 0), 0)}
                                   </td>
                                 </tr>
@@ -166,13 +166,13 @@ export default function Report() {
                             </tbody>
                             <tfoot className="bg-slate-900 text-white">
                               <tr>
-                                <td className="px-6 py-4 font-black">TOTAL UNIT</td>
+                                <td className="px-3 sm:px-6 py-4 font-black text-xs sm:text-sm">TOTAL UNIT</td>
                                 {sizes.map(s => (
-                                  <td key={s} className="px-4 py-4 text-center font-black text-emerald-400 text-lg">
+                                  <td key={s} className="px-2 sm:px-4 py-4 text-center font-black text-emerald-400 text-sm sm:text-lg">
                                     {(data.genderStats.Putra[s] || 0) + (data.genderStats.Putri[s] || 0)}
                                   </td>
                                 ))}
-                                <td className="px-6 py-4 text-right font-black text-2xl text-white">
+                                <td className="px-3 sm:px-6 py-4 text-right font-black text-lg sm:text-2xl text-white">
                                   {data.count}
                                 </td>
                               </tr>
@@ -237,19 +237,20 @@ export default function Report() {
               .sort((a, b) => new Date(b.date) - new Date(a.date))
               .map((trx) => (
                 <tr key={trx.key} className="hover:bg-slate-50/50 transition-colors">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
-                    {new Date(trx.date).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}
+                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-[11px] sm:text-sm text-slate-500">
+                    <div className="font-bold sm:font-normal">{new Date(trx.date).toLocaleDateString('id-ID', { dateStyle: 'short' })}</div>
+                    <div className="text-[10px] opacity-75">{new Date(trx.date).toLocaleTimeString('id-ID', { timeStyle: 'short' })}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-bold text-slate-800">{trx.studentName}</div>
-                    <div className="text-[11px] text-slate-400 font-medium">Wali: {trx.guardianName}</div>
+                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
+                    <div className="text-xs sm:text-sm font-bold text-slate-800 truncate max-w-[100px] sm:max-w-none">{trx.studentName}</div>
+                    <div className="text-[9px] sm:text-[11px] text-slate-400 font-medium truncate max-w-[100px] sm:max-w-none">Wali: {trx.guardianName}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right font-black text-emerald-600">
+                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-right font-black text-emerald-600 text-xs sm:text-base">
                     Rp {trx.amount.toLocaleString('id-ID')}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-center">
-                    <span className="px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-[10px] font-black uppercase tracking-tight border border-slate-200">
-                      {trx.receivedBy || '-'}
+                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-center">
+                    <span className="px-2 sm:px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-tight border border-slate-200">
+                      {trx.receivedBy?.split(' ')[0] || '-'}
                     </span>
                   </td>
                 </tr>

@@ -30,7 +30,7 @@ export default function Layout() {
   ];
 
   return (
-    <div className="flex min-h-screen bg-slate-50">
+    <div className="flex min-h-screen bg-slate-50 w-full overflow-x-hidden">
       {/* Sidebar */}
       <aside className="w-64 bg-white border-r border-slate-200 flex flex-col hidden md:flex">
         <div className="p-6 border-b border-slate-200">
@@ -60,7 +60,7 @@ export default function Layout() {
         <div className="p-4 border-t border-slate-200">
           <div className="px-3 py-2 mb-2">
             <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Login Sebagai:</p>
-            <p className="text-sm font-bold text-slate-700 truncate">{currentUser.displayName || currentUser.email}</p>
+            <p className="text-sm font-bold text-slate-700 truncate">{currentUser?.displayName || currentUser?.email || 'Petugas'}</p>
           </div>
           <button 
             onClick={handleLogout}
@@ -90,7 +90,7 @@ export default function Layout() {
           </div>
         </header>
 
-        <div className="flex-1 p-4 sm:p-6 lg:p-8 overflow-auto">
+        <div className="flex-1 p-3 sm:p-6 lg:p-8 overflow-x-hidden overflow-y-auto">
           <Outlet />
         </div>
 

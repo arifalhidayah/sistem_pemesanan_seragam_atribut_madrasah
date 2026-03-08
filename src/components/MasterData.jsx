@@ -206,7 +206,7 @@ export default function MasterData() {
         {localCategories.map((cat, catIdx) => (
           <div key={cat.id} className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
             {/* Category Header */}
-            <div className={`px-6 py-4 border-b flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${cat.type === 'grouped' ? 'bg-emerald-50/50 border-emerald-100' : 'bg-blue-50/50 border-blue-100'}`}>
+            <div className={`px-4 sm:px-6 py-3 sm:py-4 border-b flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${cat.type === 'grouped' ? 'bg-emerald-50/50 border-emerald-100' : 'bg-blue-50/50 border-blue-100'}`}>
               <div className="flex items-center gap-4 flex-1">
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-xl border-2 shadow-sm bg-white ${cat.type === 'grouped' ? 'border-emerald-200 text-slate-900' : 'border-blue-200 text-slate-900'}`}>
                   {catIdx + 1}
@@ -235,7 +235,7 @@ export default function MasterData() {
               </button>
             </div>
 
-            <div className="p-6 bg-slate-50/20">
+            <div className="p-3 sm:p-6 bg-slate-50/20">
               {cat.type === 'grouped' ? (
                 // --- Grouped Editor (Uniforms Style) ---
                 <div className="space-y-8">

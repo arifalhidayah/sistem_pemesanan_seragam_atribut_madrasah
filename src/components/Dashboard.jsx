@@ -81,7 +81,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="max-w-7xl mx-auto px-2 sm:px-4">
       <div className="md:flex md:items-center md:justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Dashboard Pesanan</h1>
