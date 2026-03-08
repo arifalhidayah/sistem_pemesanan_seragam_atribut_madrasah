@@ -19,9 +19,10 @@ export default function Report() {
       acc.totalRevenue += order.amountPaid || 0;
       acc.totalReceivables += order.remaining || 0;
       acc.totalExpected += order.grandTotal || 0;
+      acc.totalDiscounts += order.discount || 0;
       return acc;
     },
-    { totalRevenue: 0, totalReceivables: 0, totalExpected: 0 }
+    { totalRevenue: 0, totalReceivables: 0, totalExpected: 0, totalDiscounts: 0 }
   );
 
   // 2. Rekapitulasi Data Pesanan per Kategori

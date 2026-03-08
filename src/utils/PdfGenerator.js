@@ -407,6 +407,7 @@ export const generateFinancialDetailReportPDF = (orders, financialSummary) => {
       startY: currentY + 4,
       body: [
         ['Total Pemasukan (Lunas + DP)', `Rp ${safeFormat(financialSummary.totalRevenue)}`],
+        ['Total Potongan (Diskon)', `Rp ${safeFormat(financialSummary.totalDiscounts)}`],
         ['Total Piutang (Belum Bayar)', `Rp ${safeFormat(financialSummary.totalReceivables)}`],
         ['Estimasi Pendapatan Kotor', `Rp ${safeFormat(financialSummary.totalExpected)}`],
         ['Jumlah Pesanan', `${orders.length} pesanan`],
@@ -466,6 +467,45 @@ export const generateFinancialDetailReportPDF = (orders, financialSummary) => {
         4: { halign: 'right' }
       }
     });
+
+    currentY = doc.lastAutoTable.finalY + 12;
+
+    // ── III. RINCIAN PENERIMA POTONGAN / DISKON ──────────────────────────────
+    const discountedOrders = orders.filter(o => (o.discount || 0) > 0);
+    
+    if (discountedOrders.length > 0) {
+      if (currentY > 230) { doc.addPage(); currentY = 20; }
+      doc.setFontSize(11); doc.setFont("helvetica", "bold");
+      doc.text("III. RINCIAN PENERIMA POTONGAN / DISKON", 14, currentY);
+
+      const discountRows = discountedOrders.map((o, idx) => {
+        const reason = o.studentBenefitStatus === 'yatim' ? 'Yatim/Piatu' : (o.studentBenefitNote || 'Potongan Lain');
+        return [
+          idx + 1,
+          o.studentName,
+          reason,
+          `Rp ${safeFormat(o.discount)}`
+        ];
+      });
+
+      autoTable(doc, {
+        startY: currentY + 4,
+        head: [['No', 'Nama Siswa', 'Keterangan / Alasan', 'Besar Potongan']],
+        body: discountRows,
+        foot: [['', '', 'TOTAL SELURUH POTONGAN', `Rp ${safeFormat(financialSummary.totalDiscounts)}`]],
+        theme: 'grid',
+        styles: { fontSize: 9 },
+        headStyles: { fillColor: [194, 65, 12] }, // Orange-700
+        footStyles: { fillColor: [254, 243, 199], textColor: [154, 52, 18], fontStyle: 'bold', halign: 'right' },
+        columnStyles: {
+          0: { halign: 'center', cellWidth: 10 },
+          1: { cellWidth: 60 },
+          2: { cellWidth: 70 },
+          3: { halign: 'right' }
+        }
+      });
+    }
+
     doc.save(`Laporan_Keuangan_Lengkap_${new Date().toISOString().slice(0,10)}.pdf`);
     return true;
   } catch (error) {

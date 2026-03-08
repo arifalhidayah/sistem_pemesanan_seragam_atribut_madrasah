@@ -82,6 +82,16 @@ export default function Dashboard() {
     }
   };
 
+  const getBenefitBadge = (order) => {
+    if (!order.studentBenefitStatus || order.studentBenefitStatus === 'none') return null;
+    const label = order.studentBenefitStatus === 'yatim' ? 'Yatim/Piatu' : (order.studentBenefitNote || 'Khusus');
+    return (
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 text-[10px] font-black uppercase tracking-wider border border-amber-200 shadow-sm">
+        ✨ {label}
+      </span>
+    );
+  };
+
   return (
     <div className="w-full">
       <div className="md:flex md:items-center md:justify-between mb-6">
@@ -124,7 +134,10 @@ export default function Dashboard() {
                 <div>
                   <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">Siswa</div>
                   <div className="text-lg font-black text-slate-900 leading-tight">{order.studentName}</div>
-                  <div className="text-sm font-medium text-slate-500">{order.gender} • {order.createdAt?.toDate().toLocaleDateString('id-ID')}</div>
+                  <div className="flex flex-wrap items-center gap-2 mt-1">
+                    <div className="text-sm font-medium text-slate-500">{order.gender} • {order.createdAt?.toDate().toLocaleDateString('id-ID')}</div>
+                    {getBenefitBadge(order)}
+                  </div>
                 </div>
                 <div>{getStatusBadge(order.status)}</div>
               </div>
@@ -237,7 +250,10 @@ export default function Dashboard() {
                           )}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-semibold text-slate-900">{order.studentName}</div>
+                          <div className="text-sm font-semibold text-slate-900 flex items-center gap-2">
+                            {order.studentName}
+                            {getBenefitBadge(order)}
+                          </div>
                           <div className="text-[11px] text-slate-500 flex flex-wrap gap-1 mt-0.5">
                             <span className="font-bold text-slate-400 uppercase tracking-tighter mr-1">{order.gender}</span>
                             {order.items ? (
