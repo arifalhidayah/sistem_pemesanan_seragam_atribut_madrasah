@@ -1,10 +1,11 @@
 import React from 'react';
-import { Outlet, Navigate, Link } from 'react-router-dom';
+import { Outlet, Navigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { LogOut, Home, FilePlus, Package, BarChart3, Settings2, User } from 'lucide-react';
 
 export default function Layout() {
   const { currentUser, logout } = useAuth();
+  const location = useLocation();
 
   if (!currentUser) {
     return <Navigate to="/login" replace />;
@@ -17,6 +18,16 @@ export default function Layout() {
       console.error("Failed to log out", err);
     }
   };
+
+  const isActive = (path) => location.pathname === path;
+
+  const navItems = [
+    { path: '/', icon: Home, label: 'Dashboard', mobileLabel: 'Beranda' },
+    { path: '/master', icon: Settings2, label: 'Data Master', mobileLabel: 'Barang' },
+    { path: '/new-order', icon: FilePlus, label: 'Pemesanan Baru', mobileLabel: 'Pesan', special: true },
+    { path: '/report', icon: BarChart3, label: 'Laporan Rekap', mobileLabel: 'Laporan' },
+    { path: '/profile', icon: User, label: 'Profil Petugas', mobileLabel: 'Profil' },
+  ];
 
   return (
     <div className="flex min-h-screen bg-slate-50">
@@ -31,21 +42,19 @@ export default function Layout() {
         </div>
         
         <nav className="flex-1 p-4 space-y-1">
-          <Link to="/" className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md text-slate-700 hover:text-emerald-600 hover:bg-emerald-50 transition-colors">
-            <Home className="h-4 w-4" /> Dashboard
-          </Link>
-          <Link to="/master" className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md text-slate-700 hover:text-emerald-600 hover:bg-emerald-50 transition-colors">
-            <Settings2 className="h-4 w-4" /> Data Master
-          </Link>
-          <Link to="/new-order" className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md text-slate-700 hover:text-emerald-600 hover:bg-emerald-50 transition-colors">
-            <FilePlus className="h-4 w-4" /> Pemesanan Baru
-          </Link>
-          <Link to="/report" className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md text-slate-700 hover:text-emerald-600 hover:bg-emerald-50 transition-colors">
-            <BarChart3 className="h-4 w-4" /> Laporan Rekap
-          </Link>
-          <Link to="/profile" className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md text-slate-700 hover:text-emerald-600 hover:bg-emerald-50 transition-colors">
-            <User className="h-4 w-4" /> Profil Petugas
-          </Link>
+          {navItems.map((item) => (
+            <Link 
+              key={item.path}
+              to={item.path} 
+              className={`flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                isActive(item.path) 
+                  ? 'text-emerald-600 bg-emerald-50' 
+                  : 'text-slate-700 hover:text-emerald-600 hover:bg-emerald-50'
+              }`}
+            >
+              <item.icon className="h-4 w-4" /> {item.label}
+            </Link>
+          ))}
         </nav>
         
         <div className="p-4 border-t border-slate-200">
@@ -87,28 +96,33 @@ export default function Layout() {
 
         {/* Bottom Navigation for Mobile */}
         <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-2 py-1 flex justify-around items-center z-50 shadow-[0_-4px_10px_rgba(0,0,0,0.03)] pb-safe">
-          <Link to="/" className="flex flex-col items-center gap-0.5 p-2 text-slate-500 hover:text-emerald-600 transition-colors">
-            <Home className="h-5 w-5" />
-            <span className="text-[10px] font-bold uppercase tracking-tighter">Beranda</span>
-          </Link>
-          <Link to="/new-order" className="flex flex-col items-center gap-0.5 p-2 text-slate-500 hover:text-emerald-600 transition-colors">
-            <div className="bg-emerald-600 text-white p-2 rounded-xl -mt-6 shadow-lg shadow-emerald-200 border-2 border-white">
-               <FilePlus className="h-5 w-5" />
-            </div>
-            <span className="text-[10px] font-bold uppercase tracking-tighter mt-1">Pesan</span>
-          </Link>
-          <Link to="/master" className="flex flex-col items-center gap-0.5 p-2 text-slate-500 hover:text-emerald-600 transition-colors">
-            <Package className="h-5 w-5" />
-            <span className="text-[10px] font-bold uppercase tracking-tighter">Barang</span>
-          </Link>
-          <Link to="/report" className="flex flex-col items-center gap-0.5 p-2 text-slate-500 hover:text-emerald-600 transition-colors">
-            <BarChart3 className="h-5 w-5" />
-            <span className="text-[10px] font-bold uppercase tracking-tighter">Laporan</span>
-          </Link>
-          <Link to="/profile" className="flex flex-col items-center gap-0.5 p-2 text-slate-500 hover:text-emerald-600 transition-colors">
-            <User className="h-5 w-5" />
-            <span className="text-[10px] font-bold uppercase tracking-tighter">Profil</span>
-          </Link>
+          {navItems.map((item) => (
+            <Link 
+              key={item.path}
+              to={item.path} 
+              className={`flex flex-col items-center gap-0.5 p-2 transition-colors ${
+                isActive(item.path) ? 'text-emerald-600' : 'text-slate-500 hover:text-emerald-600'
+              }`}
+            >
+              {item.special ? (
+                <>
+                  <div className={`p-2 rounded-xl -mt-6 shadow-lg border-2 border-white transition-all ${
+                    isActive(item.path) 
+                      ? 'bg-emerald-600 text-white shadow-emerald-200' 
+                      : 'bg-slate-400 text-white shadow-slate-100'
+                  }`}>
+                     <item.icon className="h-5 w-5" />
+                  </div>
+                  <span className="text-[10px] font-bold uppercase tracking-tighter mt-1">{item.mobileLabel}</span>
+                </>
+              ) : (
+                <>
+                  <item.icon className="h-5 w-5" />
+                  <span className="text-[10px] font-bold uppercase tracking-tighter">{item.mobileLabel}</span>
+                </>
+              )}
+            </Link>
+          ))}
         </nav>
       </main>
     </div>
