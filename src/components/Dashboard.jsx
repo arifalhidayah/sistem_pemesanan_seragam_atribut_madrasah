@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useOrders } from '../context/OrderContext';
+import { useMasterData } from '../context/MasterDataContext';
 import { Printer, Search, FileText, Edit, Trash2, MessageSquare } from 'lucide-react';
 import { generateInvoicePDF } from '../utils/PdfGenerator';
 import { uploadAndGetWhatsAppLink } from '../utils/WhatsAppUtils';
 
 export default function Dashboard() {
   const { orders, fetchOrders, loadingOrders, deleteOrder } = useOrders();
+  const { categories: masterCategories } = useMasterData();
   const [searchTerm, setSearchTerm] = useState('');
   const [isProcessingWA, setIsProcessingWA] = useState(null); // ID of order being processed
   const navigate = useNavigate();
@@ -23,7 +25,7 @@ export default function Dashboard() {
   );
 
   const handlePrint = (order) => {
-    generateInvoicePDF(order);
+    generateInvoicePDF(order, true, masterCategories);
   };
 
   const handleWhatsApp = async (order) => {
@@ -35,7 +37,7 @@ export default function Dashboard() {
     setIsProcessingWA(order.id);
     try {
       // 1. Generate PDF Blob (don't save/download)
-      const pdfBlob = generateInvoicePDF(order, false);
+      const pdfBlob = generateInvoicePDF(order, false, masterCategories);
       
       if (!pdfBlob) {
         alert("Gagal membuat file PDF.");

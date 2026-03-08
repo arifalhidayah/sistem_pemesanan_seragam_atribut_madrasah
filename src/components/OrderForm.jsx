@@ -37,6 +37,8 @@ export default function OrderForm() {
   const [paymentHistory, setPaymentHistory] = useState([]);
   const [isSaving, setIsSaving] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [studentBenefitStatus, setStudentBenefitStatus] = useState('none'); // 'none' | 'yatim' | 'custom'
+  const [studentBenefitNote, setStudentBenefitNote] = useState('');
 
   useEffect(() => {
     if (orders.length === 0) fetchOrders();
@@ -82,6 +84,8 @@ export default function OrderForm() {
          setDiscount(existingOrder.discount || 0);
          setPaymentHistory(existingOrder.paymentHistory || []);
          setCurrentPayment(0);
+         setStudentBenefitStatus(existingOrder.studentBenefitStatus || 'none');
+         setStudentBenefitNote(existingOrder.studentBenefitNote || '');
        }
     }
   }, [id, orders, isEditMode, loadingMaster, masterCategories]);
@@ -187,6 +191,8 @@ export default function OrderForm() {
         paymentHistory: newPaymentHistory,
         remaining,
         status: status.label,
+        studentBenefitStatus,
+        studentBenefitNote,
         updatedBy: adminName,
         ...(isEditMode ? {} : { createdBy: adminName })
       };
@@ -208,12 +214,12 @@ export default function OrderForm() {
       if (result.success) {
         if (mode === 'print') {
           console.log("Triggering PDF Local Print...");
-          generateInvoicePDF({ ...orderData, id: result.id });
+          generateInvoicePDF({ ...orderData, id: result.id }, true, masterCategories);
           alert("Berhasil menyimpan! PDF sedang didownload.");
         } else if (mode === 'whatsapp') {
           console.log("Triggering WhatsApp PDF & Local Print Process...");
           // shouldSave = true so it downloads locally AND returns blob for WA
-          const pdfBlob = generateInvoicePDF({ ...orderData, id: result.id }, true);
+          const pdfBlob = generateInvoicePDF({ ...orderData, id: result.id }, true, masterCategories);
           if (orderData.whatsappNumber && pdfBlob) {
             const waUrl = await uploadAndGetWhatsAppLink({ ...orderData, id: result.id }, pdfBlob);
             if (waUrl) {
@@ -384,10 +390,49 @@ export default function OrderForm() {
                 <input 
                   type="text" 
                   value={discount === 0 ? '' : formatNumber(discount)} 
-                  onChange={(e) => setDiscount(parseNumber(e.target.value))}
+                  onChange={(e) => { setStudentBenefitStatus('none'); setDiscount(parseNumber(e.target.value)); }}
                   className="w-32 pl-9 pr-3 py-1.5 text-right font-bold text-sm border border-slate-300 rounded-lg"
                 />
               </div>
+            </div>
+
+            {/* Student Benefit Status */}
+            <div className="border border-amber-200 bg-amber-50/50 rounded-xl p-3 space-y-2">
+              <p className="text-[10px] font-black text-amber-700 uppercase tracking-widest">Status Keistimewaan Siswa</p>
+              <div className="flex flex-wrap gap-2">
+                {[{val:'none',label:'— Tidak Ada —'},{val:'yatim',label:'Yatim / Piatu'},{val:'custom',label:'Keterangan Lain'}].map(opt => (
+                  <button
+                    key={opt.val}
+                    type="button"
+                    onClick={() => {
+                      setStudentBenefitStatus(opt.val);
+                      if (opt.val === 'yatim') { setDiscount(subTotal); }
+                      else if (opt.val === 'none') { setDiscount(0); }
+                    }}
+                    className={`px-3 py-1.5 text-xs font-bold rounded-lg border-2 transition-all ${
+                      studentBenefitStatus === opt.val
+                        ? opt.val === 'none' ? 'bg-slate-200 border-slate-400 text-slate-800'
+                          : opt.val === 'yatim' ? 'bg-emerald-600 border-emerald-600 text-white shadow-md'
+                          : 'bg-blue-600 border-blue-600 text-white shadow-md'
+                        : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300'
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+              {studentBenefitStatus === 'yatim' && (
+                <p className="text-[11px] text-emerald-700 font-bold">✅ Diskon otomatis 100% — Siswa dinyatakan <strong>Lunas</strong></p>
+              )}
+              {studentBenefitStatus === 'custom' && (
+                <input
+                  type="text"
+                  value={studentBenefitNote}
+                  onChange={e => setStudentBenefitNote(e.target.value)}
+                  placeholder="Tulis keterangan (misal: Beasiswa, Anak Guru, dll.)"
+                  className="w-full text-xs border border-blue-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-200"
+                />
+              )}
             </div>
             <div className="flex justify-between items-center py-3 bg-slate-50 px-4 rounded-xl border border-slate-100">
               <span className="font-bold text-slate-800">TOTAL BIAYA</span>

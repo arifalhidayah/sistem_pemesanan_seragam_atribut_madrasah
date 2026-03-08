@@ -6,7 +6,7 @@ const safeFormat = (val) => {
   return val.toLocaleString('id-ID');
 };
 
-export const generateInvoicePDF = (order, shouldSave = true) => {
+export const generateInvoicePDF = (order, shouldSave = true, masterCategories = []) => {
   try {
     const doc = new jsPDF();
   
@@ -29,8 +29,18 @@ export const generateInvoicePDF = (order, shouldSave = true) => {
   doc.text(`Nama Wali: ${order.guardianName}`, 14, 46);
   doc.text(`Nama Siswa: ${order.studentName}`, 14, 52);
   doc.text(`Alamat: ${order.address}`, 14, 58);
-  
   doc.text(`Jenis Kelamin: ${order.gender}`, 130, 46);
+
+  // Student Benefit Status
+  let detailStartY = 65;
+  if (order.studentBenefitStatus && order.studentBenefitStatus !== 'none') {
+    const benefitLabel = order.studentBenefitStatus === 'yatim' ? 'YATIM / PIATU' : (order.studentBenefitNote || 'Keistimewaan Khusus');
+    doc.setFontSize(9); doc.setFont("helvetica", "bold");
+    doc.setTextColor(4, 120, 87);
+    doc.text(`Status: ${benefitLabel}`, 14, 64);
+    doc.setTextColor(0,0,0); doc.setFont("helvetica", "normal");
+    detailStartY = 70;
+  }
 
   // Table Data
   let tableData = [];
@@ -67,7 +77,7 @@ export const generateInvoicePDF = (order, shouldSave = true) => {
   }
 
   autoTable(doc, {
-    startY: 65,
+    startY: detailStartY,
     head: [['No', 'Keterangan Item', 'Kategori', 'Harga (Rp)']],
     body: tableData,
     theme: 'grid',
@@ -80,7 +90,19 @@ export const generateInvoicePDF = (order, shouldSave = true) => {
     }
   });
 
-  const finalY = doc.lastAutoTable.finalY + 10;
+  // Category notes below the table
+  const categoriesWithNotes = masterCategories.filter(c => c.notes && c.notes.trim());
+  let notesY = doc.lastAutoTable.finalY + 4;
+  categoriesWithNotes.forEach(cat => {
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "italic");
+    doc.setTextColor(120, 100, 20);
+    const lines = doc.splitTextToSize(`* ${cat.name}: ${cat.notes}`, 182);
+    doc.text(lines, 14, notesY);
+    notesY += lines.length * 4 + 2;
+    doc.setTextColor(0,0,0);
+  });
+  const finalY = notesY + 6;
   
   // Totals
   doc.setFont("helvetica", "bold");

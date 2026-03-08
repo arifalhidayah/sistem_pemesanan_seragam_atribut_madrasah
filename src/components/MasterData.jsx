@@ -56,6 +56,10 @@ export default function MasterData() {
     setLocalCategories(localCategories.map(c => c.id === id ? { ...c, name: newName } : c));
   };
 
+  const updateCategoryNotes = (id, notes) => {
+    setLocalCategories(localCategories.map(c => c.id === id ? { ...c, notes } : c));
+  };
+
   // --- Sub-item handlers for Grouped Type (Uniforms) ---
   const handleTypeChangeInGroup = (catId, oldType, newType) => {
     setLocalCategories(localCategories.map(c => {
@@ -233,6 +237,18 @@ export default function MasterData() {
               >
                 <Trash2 className="w-5 h-5" />
               </button>
+            </div>
+
+            {/* Category Notes */}
+            <div className="px-4 sm:px-6 py-3 border-b border-slate-100 bg-amber-50/40">
+              <label className="block text-[10px] font-black text-amber-700 uppercase tracking-widest mb-1">📋 Catatan (akan tampil di bawah tabel nota siswa)</label>
+              <textarea
+                value={cat.notes || ''}
+                onChange={(e) => updateCategoryNotes(cat.id, e.target.value)}
+                rows={2}
+                className="w-full text-sm text-slate-700 border border-amber-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-amber-300 focus:border-amber-400 bg-white resize-none placeholder:text-slate-300"
+                placeholder="Contoh: Ukuran seragam dapat berubah setelah konfirmasi dengan penjahit..."
+              />
             </div>
 
             <div className="p-3 sm:p-6 bg-slate-50/20">
