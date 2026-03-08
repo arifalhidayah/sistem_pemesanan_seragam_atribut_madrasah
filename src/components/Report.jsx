@@ -88,15 +88,17 @@ export default function Report() {
           <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight break-words">Laporan & Rekapitulasi</h1>
           <p className="mt-1 text-sm text-slate-500 break-words">Ringkasan keuangan dan rincian pesanan MI Darun Najah.</p>
         </div>
-        <div className="mt-6 md:mt-0 flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-          <button onClick={handlePrintTailor} className="flex-1 min-w-0 flex items-center justify-center gap-2 px-3 sm:px-6 py-3 sm:py-4 bg-white border-2 border-slate-200 text-slate-700 font-bold rounded-2xl hover:bg-slate-50 transition-all shadow-sm active:scale-95 text-xs sm:text-sm">
-            <Scissors className="w-4 h-4 shrink-0" /> <span className="truncate">Data Penjahit</span>
-          </button>
-          <button onClick={handlePrint} className="flex-1 min-w-0 flex items-center justify-center gap-2 px-3 sm:px-6 py-3 sm:py-4 bg-white border-2 border-slate-200 text-slate-700 font-bold rounded-2xl hover:bg-slate-50 transition-all shadow-sm active:scale-95 text-xs sm:text-sm">
-            <Printer className="w-4 h-4 shrink-0" /> <span className="truncate">Laporan Rekap</span>
-          </button>
-          <button onClick={handlePrintFinancialDetail} className="flex-1 min-w-0 flex items-center justify-center gap-2 px-3 sm:px-6 py-3 sm:py-4 bg-emerald-600 text-white font-black rounded-2xl hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-100 active:scale-95 text-xs sm:text-sm">
-            <Download className="w-4 h-4 shrink-0" /> <span className="truncate">Laporan Keuangan</span>
+        <div className="mt-4 md:mt-0 w-full md:w-auto">
+          <div className="grid grid-cols-2 gap-2 mb-2">
+            <button onClick={handlePrintTailor} className="flex items-center justify-center gap-1.5 px-3 py-2.5 bg-white border-2 border-slate-200 text-slate-700 font-bold rounded-xl hover:bg-slate-50 transition-all shadow-sm active:scale-95 text-xs">
+              <Scissors className="w-3.5 h-3.5 shrink-0" /> Data Penjahit
+            </button>
+            <button onClick={handlePrint} className="flex items-center justify-center gap-1.5 px-3 py-2.5 bg-white border-2 border-slate-200 text-slate-700 font-bold rounded-xl hover:bg-slate-50 transition-all shadow-sm active:scale-95 text-xs">
+              <Printer className="w-3.5 h-3.5 shrink-0" /> Laporan Rekap
+            </button>
+          </div>
+          <button onClick={handlePrintFinancialDetail} className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-emerald-600 text-white font-black rounded-xl hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-100 active:scale-95 text-sm">
+            <Download className="w-4 h-4 shrink-0" /> Laporan Keuangan Lengkap
           </button>
         </div>
       </div>
