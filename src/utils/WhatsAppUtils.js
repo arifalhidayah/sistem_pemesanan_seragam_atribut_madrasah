@@ -40,20 +40,14 @@ export const uploadAndGetWhatsAppLink = async (order, pdfBlob) => {
     const fileName = `Nota_${order.studentName.replace(/\s+/g, '_')}.pdf`;
 
     // 2. Upload to Google Apps Script
-    // PENTING: Kirim body sebagai 'text/plain' (bukan 'application/json') agar
-    // browser Safari di iOS tidak memicu CORS preflight (OPTIONS request).
-    // Google Apps Script tidak merespons preflight, sehingga menyebabkan error di Safari/iPhone.
-    // Request dengan Content-Type text/plain adalah "simple request" yang tidak memerlukan preflight.
-    // Data JSON tetap bisa di-parse di sisi Apps Script menggunakan JSON.parse(e.postData.contents).
+    // Gunakan Content-Type: text/plain agar tidak memicu CORS preflight di Safari/iOS.
+    // Google Apps Script tidak merespons OPTIONS preflight, sehingga request dengan
+    // application/json akan selalu gagal di iPhone. text/plain = "simple request",
+    // tidak butuh preflight. JSON tetap bisa di-parse server-side.
     const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'text/plain'
-      },
-      body: JSON.stringify({
-        data: base64Data,
-        name: fileName
-      })
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ data: base64Data, name: fileName })
     });
 
     const result = await response.json();

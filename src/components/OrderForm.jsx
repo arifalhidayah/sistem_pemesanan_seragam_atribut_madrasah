@@ -28,10 +28,10 @@ export default function OrderForm() {
     gender: 'Putri',
     whatsappNumber: '',
   });
-  
+
   // Selections state: { [categoryId]: [selectedItem1, selectedItem2, ...] }
   const [selectedItemsMap, setSelectedItemsMap] = useState({});
-  
+
   const [discount, setDiscount] = useState(0);
   const [currentPayment, setCurrentPayment] = useState(0);
   const [paymentHistory, setPaymentHistory] = useState([]);
@@ -50,43 +50,43 @@ export default function OrderForm() {
     if (loadingMaster || !masterCategories || masterCategories.length === 0) return;
 
     if (id && orders.length > 0 && !isEditMode) {
-       const existingOrder = orders.find(o => o.id === id);
-       if (existingOrder) {
-         setIsEditMode(true);
-         setFormData({
-           guardianName: existingOrder.guardianName || '',
-           studentName: existingOrder.studentName || '',
-           address: existingOrder.address || '',
-           gender: existingOrder.gender || 'Putri',
-           whatsappNumber: existingOrder.whatsappNumber || '',
-         });
-         
-         const initSelections = {};
-         
-         // Try new structure first
-         if (existingOrder.categoriesSelections) {
-            setSelectedItemsMap(existingOrder.categoriesSelections);
-         } else {
-            // MIGRATION: Convert old uniforms/attributes to category selections
-            // Find the cat-uniforms and cat-attributes if they exist
-            const uniCat = masterCategories.find(c => c.id === 'cat-uniforms' || c.type === 'grouped');
-            const attrCat = masterCategories.find(c => c.id === 'cat-attributes' || c.type === 'flat');
-            
-            if (uniCat && existingOrder.uniforms) {
-              initSelections[uniCat.id] = existingOrder.uniforms;
-            }
-            if (attrCat && existingOrder.attributes) {
-              initSelections[attrCat.id] = existingOrder.attributes;
-            }
-            setSelectedItemsMap(initSelections);
-         }
-         
-         setDiscount(existingOrder.discount || 0);
-         setPaymentHistory(existingOrder.paymentHistory || []);
-         setCurrentPayment(0);
-         setStudentBenefitStatus(existingOrder.studentBenefitStatus || 'none');
-         setStudentBenefitNote(existingOrder.studentBenefitNote || '');
-       }
+      const existingOrder = orders.find(o => o.id === id);
+      if (existingOrder) {
+        setIsEditMode(true);
+        setFormData({
+          guardianName: existingOrder.guardianName || '',
+          studentName: existingOrder.studentName || '',
+          address: existingOrder.address || '',
+          gender: existingOrder.gender || 'Putri',
+          whatsappNumber: existingOrder.whatsappNumber || '',
+        });
+
+        const initSelections = {};
+
+        // Try new structure first
+        if (existingOrder.categoriesSelections) {
+          setSelectedItemsMap(existingOrder.categoriesSelections);
+        } else {
+          // MIGRATION: Convert old uniforms/attributes to category selections
+          // Find the cat-uniforms and cat-attributes if they exist
+          const uniCat = masterCategories.find(c => c.id === 'cat-uniforms' || c.type === 'grouped');
+          const attrCat = masterCategories.find(c => c.id === 'cat-attributes' || c.type === 'flat');
+
+          if (uniCat && existingOrder.uniforms) {
+            initSelections[uniCat.id] = existingOrder.uniforms;
+          }
+          if (attrCat && existingOrder.attributes) {
+            initSelections[attrCat.id] = existingOrder.attributes;
+          }
+          setSelectedItemsMap(initSelections);
+        }
+
+        setDiscount(existingOrder.discount || 0);
+        setPaymentHistory(existingOrder.paymentHistory || []);
+        setCurrentPayment(0);
+        setStudentBenefitStatus(existingOrder.studentBenefitStatus || 'none');
+        setStudentBenefitNote(existingOrder.studentBenefitNote || '');
+      }
     }
   }, [id, orders, isEditMode, loadingMaster, masterCategories]);
 
@@ -99,7 +99,7 @@ export default function OrderForm() {
   const toggleGroupedSelection = (catId, groupType, itemId) => {
     const category = masterCategories.find(c => c.id === catId);
     const item = category.items.find(i => i.id === itemId);
-    
+
     setSelectedItemsMap(prev => {
       const current = prev[catId] || [];
       // Replace existing selection for this groupType
@@ -112,7 +112,7 @@ export default function OrderForm() {
   const toggleFlatSelection = (catId, itemId) => {
     const category = masterCategories.find(c => c.id === catId);
     const item = category.items.find(i => i.id === itemId);
-    
+
     setSelectedItemsMap(prev => {
       const current = prev[catId] || [];
       const exists = current.find(i => i.id === itemId);
@@ -156,7 +156,7 @@ export default function OrderForm() {
   const handleProcessSave = async (mode) => {
     if (isSaving) return;
     setIsSaving(true);
-    
+
     try {
       const adminName = currentUser?.displayName || currentUser?.email || 'System';
 
@@ -210,7 +210,7 @@ export default function OrderForm() {
       } else {
         result = await addOrder(orderData);
       }
-      
+
       if (result.success) {
         if (mode === 'print') {
           console.log("Triggering PDF Local Print...");
@@ -223,8 +223,10 @@ export default function OrderForm() {
           if (orderData.whatsappNumber && pdfBlob) {
             const waUrl = await uploadAndGetWhatsAppLink({ ...orderData, id: result.id }, pdfBlob);
             if (waUrl) {
-              window.open(waUrl, '_blank');
               alert("Berhasil menyimpan! Bukti dicetak & membuka WhatsApp...");
+              // Gunakan window.location.href bukan window.open() agar tidak diblokir
+              // oleh Safari iOS. Safari memblokir window.open() setelah operasi async.
+              window.location.href = waUrl;
             } else {
               alert("Berhasil menyimpan & Cetak bukti, tapi gagal mengunggah ke cloud untuk WA.");
             }
@@ -234,7 +236,7 @@ export default function OrderForm() {
         } else {
           alert("Data berhasil disimpan.");
         }
-        
+
         // Final delay or wait for user to click OK on alert before navigating
         navigate('/');
       } else {
@@ -285,13 +287,13 @@ export default function OrderForm() {
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Nomor WhatsApp Wali</label>
-              <input 
-                type="text" 
-                name="whatsappNumber" 
-                value={formData.whatsappNumber} 
-                onChange={handleInputChange} 
-                className="w-full px-3 py-2 border border-slate-300 rounded-md text-emerald-700 font-bold" 
-                placeholder="081234..." 
+              <input
+                type="text"
+                name="whatsappNumber"
+                value={formData.whatsappNumber}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border border-slate-300 rounded-md text-emerald-700 font-bold"
+                placeholder="081234..."
               />
             </div>
           </div>
@@ -326,8 +328,8 @@ export default function OrderForm() {
                         <div className="flex flex-wrap items-center gap-2 flex-1 min-w-0">
                           <span className="text-xs font-bold text-slate-400 w-5">{gIdx + 1}.</span>
                           <label className="text-sm font-medium text-slate-700 flex-1 sm:max-w-[150px] md:max-w-[200px] truncate" title={groupType}>{groupType}:</label>
-                          <select 
-                            value={currentSelection?.id || ''} 
+                          <select
+                            value={currentSelection?.id || ''}
                             onChange={(e) => toggleGroupedSelection(cat.id, groupType, e.target.value)}
                             className="flex-1 min-w-0 px-2 sm:px-3 py-1.5 border border-slate-300 rounded-md text-sm truncate"
                           >
@@ -352,15 +354,15 @@ export default function OrderForm() {
                     .map((item, iIdx) => {
                       const isSelected = (selectedItemsMap[cat.id] || []).some(i => i.id === item.id);
                       return (
-                        <button 
+                        <button
                           key={item.id}
                           type="button"
                           onClick={() => toggleFlatSelection(cat.id, item.id)}
                           className={`p-3 text-left border rounded-xl transition-all flex flex-col justify-between h-full ${isSelected ? 'border-emerald-500 bg-emerald-50 ring-1 ring-emerald-500 shadow-sm' : 'border-slate-200 hover:border-emerald-300 hover:bg-slate-50'}`}
                         >
                           <div className="flex items-start justify-between mb-2">
-                             <span className="text-xs font-bold text-slate-400">{iIdx + 1}.</span>
-                             {isSelected && <Check className="w-4 h-4 text-emerald-600" />}
+                            <span className="text-xs font-bold text-slate-400">{iIdx + 1}.</span>
+                            {isSelected && <Check className="w-4 h-4 text-emerald-600" />}
                           </div>
                           <div>
                             <div className={`text-sm font-semibold mb-1 leading-tight ${isSelected ? 'text-emerald-900' : 'text-slate-800'}`}>{item.name}</div>
@@ -387,9 +389,9 @@ export default function OrderForm() {
               <label className="text-sm font-medium text-slate-500">Potongan Harga</label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">Rp</span>
-                <input 
-                  type="text" 
-                  value={discount === 0 ? '' : formatNumber(discount)} 
+                <input
+                  type="text"
+                  value={discount === 0 ? '' : formatNumber(discount)}
                   onChange={(e) => { setStudentBenefitStatus('none'); setDiscount(parseNumber(e.target.value)); }}
                   className="w-32 pl-9 pr-3 py-1.5 text-right font-bold text-sm border border-slate-300 rounded-lg"
                 />
@@ -400,7 +402,7 @@ export default function OrderForm() {
             <div className="border border-amber-200 bg-amber-50/50 rounded-xl p-3 space-y-2">
               <p className="text-[10px] font-black text-amber-700 uppercase tracking-widest">Status Keistimewaan Siswa</p>
               <div className="flex flex-wrap gap-2">
-                {[{val:'none',label:'— Tidak Ada —'},{val:'yatim',label:'Yatim / Piatu'},{val:'custom',label:'Keterangan Lain'}].map(opt => (
+                {[{ val: 'none', label: '— Tidak Ada —' }, { val: 'yatim', label: 'Yatim / Piatu' }, { val: 'custom', label: 'Keterangan Lain' }].map(opt => (
                   <button
                     key={opt.val}
                     type="button"
@@ -409,13 +411,12 @@ export default function OrderForm() {
                       if (opt.val === 'yatim') { setDiscount(subTotal); }
                       else if (opt.val === 'none') { setDiscount(0); }
                     }}
-                    className={`px-3 py-1.5 text-xs font-bold rounded-lg border-2 transition-all ${
-                      studentBenefitStatus === opt.val
+                    className={`px-3 py-1.5 text-xs font-bold rounded-lg border-2 transition-all ${studentBenefitStatus === opt.val
                         ? opt.val === 'none' ? 'bg-slate-200 border-slate-400 text-slate-800'
                           : opt.val === 'yatim' ? 'bg-emerald-600 border-emerald-600 text-white shadow-md'
-                          : 'bg-blue-600 border-blue-600 text-white shadow-md'
+                            : 'bg-blue-600 border-blue-600 text-white shadow-md'
                         : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300'
-                    }`}
+                      }`}
                   >
                     {opt.label}
                   </button>
@@ -438,7 +439,7 @@ export default function OrderForm() {
               <span className="font-bold text-slate-800">TOTAL BIAYA</span>
               <span className="text-xl font-black text-emerald-600">Rp {grandTotal.toLocaleString('id-ID')}</span>
             </div>
-            
+
             {isEditMode && paymentHistory.length > 0 && (
               <div className="py-2 border-t border-slate-100 mt-2">
                 <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Riwayat Pembayaran</p>
@@ -461,10 +462,10 @@ export default function OrderForm() {
               <label className="text-sm font-bold text-slate-700">{isEditMode ? 'Tambah Pembayaran' : 'Nominal Pembayaran'}</label>
               <div className="relative">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-lg font-bold text-slate-400">Rp</span>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   required
-                  value={currentPayment === 0 ? '' : formatNumber(currentPayment)} 
+                  value={currentPayment === 0 ? '' : formatNumber(currentPayment)}
                   onChange={(e) => setCurrentPayment(parseNumber(e.target.value))}
                   className="w-full pl-10 sm:pl-12 pr-4 py-2 sm:py-3 text-right font-black text-xl sm:text-2xl text-slate-900 border-2 border-emerald-500 bg-emerald-50/30 rounded-2xl focus:ring-4 focus:ring-emerald-500/20"
                 />
@@ -476,14 +477,14 @@ export default function OrderForm() {
               <span className={`${remaining > 0 ? 'text-red-500 underline' : 'text-emerald-600'} text-right ml-2`}>Rp {remaining.toLocaleString('id-ID')}</span>
             </div>
             <div className="flex justify-between items-center pt-2">
-               <span className="text-xs font-bold text-slate-400">STATUS</span>
-               <span className={`px-3 py-1 text-xs font-black rounded-full uppercase tracking-widest ${status.color}`}>{status.label}</span>
+              <span className="text-xs font-bold text-slate-400">STATUS</span>
+              <span className={`px-3 py-1 text-xs font-black rounded-full uppercase tracking-widest ${status.color}`}>{status.label}</span>
             </div>
           </div>
         </div>
 
         <div className="flex flex-col sm:flex-row sm:justify-end gap-3 pt-6 border-t border-slate-100 mt-6">
-          <button 
+          <button
             type="button"
             onClick={handleSaveOnly}
             disabled={isSaving}
@@ -492,8 +493,8 @@ export default function OrderForm() {
             <Save className={`w-5 h-5 ${isSaving ? 'animate-spin' : ''}`} />
             <span>{isSaving ? 'MEMPROSES...' : 'SIMPAN SAJA'}</span>
           </button>
-          
-          <button 
+
+          <button
             type="button"
             onClick={handleSaveAndPrint}
             disabled={isSaving}
@@ -503,7 +504,7 @@ export default function OrderForm() {
             <span>{isSaving ? 'MEMPROSES...' : 'SIMPAN & CETAK'}</span>
           </button>
 
-          <button 
+          <button
             type="button"
             onClick={handleSaveAndWhatsApp}
             disabled={isSaving}

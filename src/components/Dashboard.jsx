@@ -19,8 +19,8 @@ export default function Dashboard() {
   }, []);
 
   const filteredOrders = orders.filter(
-    order => 
-      order.studentName.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    order =>
+      order.studentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.guardianName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -38,7 +38,7 @@ export default function Dashboard() {
     try {
       // 1. Generate PDF Blob (don't save/download)
       const pdfBlob = generateInvoicePDF(order, false, masterCategories);
-      
+
       if (!pdfBlob) {
         alert("Gagal membuat file PDF.");
         return;
@@ -46,15 +46,18 @@ export default function Dashboard() {
 
       // 2. Upload and get WA Link
       const waUrl = await uploadAndGetWhatsAppLink(order, pdfBlob);
-      
+
       if (waUrl) {
-        window.open(waUrl, '_blank');
+        // Gunakan window.location.href bukan window.open() agar tidak diblokir
+        // oleh Safari iOS. Safari memblokir window.open() yang dipanggil setelah
+        // operasi async (gesture user context sudah hilang).
+        window.location.href = waUrl;
       } else {
         alert("Gagal memproses link WhatsApp.");
       }
     } catch (error) {
-       console.error(error);
-       alert("Terjadi kesalahan saat memproses WhatsApp.");
+      console.error(error);
+      alert("Terjadi kesalahan saat memproses WhatsApp.");
     } finally {
       setIsProcessingWA(null);
     }
@@ -141,51 +144,51 @@ export default function Dashboard() {
                 </div>
                 <div>{getStatusBadge(order.status)}</div>
               </div>
-              
+
               <div className="grid grid-cols-2 gap-4 py-3 border-y border-slate-50">
-                  <div>
-                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Biaya</div>
-                    <div className="text-sm font-black text-slate-900">Rp {order.grandTotal?.toLocaleString('id-ID')}</div>
+                <div>
+                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Biaya</div>
+                  <div className="text-sm font-black text-slate-900">Rp {order.grandTotal?.toLocaleString('id-ID')}</div>
+                </div>
+                <div>
+                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Sisa Tagihan</div>
+                  <div className={`text-sm font-black ${order.remaining > 0 ? 'text-red-600' : 'text-emerald-600'}`}>
+                    {order.remaining > 0 ? `Rp ${order.remaining.toLocaleString('id-ID')}` : 'LUNAS'}
                   </div>
-                  <div>
-                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Sisa Tagihan</div>
-                    <div className={`text-sm font-black ${order.remaining > 0 ? 'text-red-600' : 'text-emerald-600'}`}>
-                      {order.remaining > 0 ? `Rp ${order.remaining.toLocaleString('id-ID')}` : 'LUNAS'}
-                    </div>
-                  </div>
+                </div>
               </div>
 
               <div className="flex items-center justify-between gap-2 pt-1">
                 <div className="flex -space-x-2">
-                   {/* Mini preview for items if needed or just guardian */}
-                   <div className="text-xs text-slate-500 font-medium">Wali: <span className="text-slate-900 font-bold">{order.guardianName}</span></div>
+                  {/* Mini preview for items if needed or just guardian */}
+                  <div className="text-xs text-slate-500 font-medium">Wali: <span className="text-slate-900 font-bold">{order.guardianName}</span></div>
                 </div>
                 <div className="flex gap-2">
-                   <button
-                     onClick={() => handleWhatsApp(order)}
-                     disabled={isProcessingWA === order.id}
-                     className={`p-2.5 rounded-xl border transition-all ${isProcessingWA === order.id ? 'bg-slate-50 text-slate-300' : 'bg-emerald-50 border-emerald-100 text-emerald-600 active:scale-95'}`}
-                   >
-                     <MessageSquare className="w-5 h-5" />
-                   </button>
-                   <button
-                     onClick={() => navigate(`/edit-order/${order.id}`)}
-                     className="p-2.5 rounded-xl border bg-blue-50 border-blue-100 text-blue-600 active:scale-95 transition-all"
-                   >
-                     <Edit className="w-5 h-5" />
-                   </button>
-                   <button
-                     onClick={() => handlePrint(order)}
-                     className="p-2.5 rounded-xl border bg-slate-50 border-slate-200 text-slate-600 active:scale-95 transition-all"
-                   >
-                     <Printer className="w-5 h-5" />
-                   </button>
-                   <button
-                     onClick={() => handleDelete(order.id)}
-                     className="p-2.5 rounded-xl border bg-red-50 border-red-100 text-red-500 active:scale-95 transition-all"
-                   >
-                     <Trash2 className="w-5 h-5" />
-                   </button>
+                  <button
+                    onClick={() => handleWhatsApp(order)}
+                    disabled={isProcessingWA === order.id}
+                    className={`p-2.5 rounded-xl border transition-all ${isProcessingWA === order.id ? 'bg-slate-50 text-slate-300' : 'bg-emerald-50 border-emerald-100 text-emerald-600 active:scale-95'}`}
+                  >
+                    <MessageSquare className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={() => navigate(`/edit-order/${order.id}`)}
+                    className="p-2.5 rounded-xl border bg-blue-50 border-blue-100 text-blue-600 active:scale-95 transition-all"
+                  >
+                    <Edit className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={() => handlePrint(order)}
+                    className="p-2.5 rounded-xl border bg-slate-50 border-slate-200 text-slate-600 active:scale-95 transition-all"
+                  >
+                    <Printer className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(order.id)}
+                    className="p-2.5 rounded-xl border bg-red-50 border-red-100 text-red-500 active:scale-95 transition-all"
+                  >
+                    <Trash2 className="w-5 h-5" />
+                  </button>
                 </div>
               </div>
             </div>
@@ -235,8 +238,8 @@ export default function Dashboard() {
                     <tr>
                       <td colSpan="7" className="px-6 py-8 text-center text-sm text-slate-500">
                         <div className="flex flex-col items-center justify-center space-y-2">
-                           <FileText className="w-8 h-8 text-slate-300" />
-                           <p>Tidak ada data pesanan yang ditemukan.</p>
+                          <FileText className="w-8 h-8 text-slate-300" />
+                          <p>Tidak ada data pesanan yang ditemukan.</p>
                         </div>
                       </td>
                     </tr>
