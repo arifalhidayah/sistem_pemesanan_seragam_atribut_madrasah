@@ -123,6 +123,52 @@ export default function OrderForm() {
     });
   };
 
+  const setAllGroupedSize = (catId, sizeName) => {
+    const category = masterCategories.find(c => c.id === catId);
+    if (!category || category.type !== 'grouped') return;
+
+    const newSelections = [];
+    // Group all items by groupType (e.g. "Seragam Hijau Putih", "Seragam Pramuka")
+    const groupedItems = category.items.reduce((acc, item) => {
+      if (!acc[item.type]) acc[item.type] = [];
+      acc[item.type].push(item);
+      return acc;
+    }, {});
+
+    Object.entries(groupedItems).forEach(([groupType, items]) => {
+      // Find item that matches the exact sizeName
+      const matchingSizeItem = items.find(i => i.name === sizeName);
+      if (matchingSizeItem) {
+        newSelections.push(matchingSizeItem);
+      }
+    });
+
+    setSelectedItemsMap(prev => ({
+      ...prev,
+      [catId]: newSelections
+    }));
+  };
+
+  const selectAllFlatItems = (catId) => {
+    const category = masterCategories.find(c => c.id === catId);
+    if (!category || category.type !== 'flat') return;
+
+    // Only select items that are visible/applicable to the current gender
+    const applicableItems = category.items.filter(
+      item => !item.forGender || item.forGender === 'Semua' || item.forGender === formData.gender
+    );
+
+    setSelectedItemsMap(prev => {
+      const current = prev[catId] || [];
+      const isAllSelected = current.length === applicableItems.length;
+
+      return {
+        ...prev,
+        [catId]: isAllSelected ? [] : applicableItems
+      };
+    });
+  };
+
   // Calculate totals
   const subTotal = Object.values(selectedItemsMap).flat().reduce((sum, item) => sum + (item.price || 0), 0);
   const grandTotal = Math.max(0, subTotal - discount);
@@ -305,12 +351,49 @@ export default function OrderForm() {
         ) : (
           masterCategories.map((cat, catIdx) => (
             <div key={cat.id} className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200">
-              <h2 className="text-lg font-semibold text-slate-800 mb-4 border-b border-slate-100 pb-2 flex justify-between items-center">
-                <span>{cat.name}</span>
-                <span className="text-sm font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 border-b border-slate-100 pb-3">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                  <h2 className="text-lg font-semibold text-slate-800">{cat.name}</h2>
+
+                  {/* Bulk Select Options */}
+                  {cat.type === 'grouped' && (
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-medium text-slate-500">Pilih Ukuran Sekaligus:</span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {/* Get unique size names from items */}
+                        {Array.from(new Set(cat.items.map(item => item.name)))
+                          .sort()
+                          .map(sizeName => (
+                            <button
+                              key={sizeName}
+                              type="button"
+                              onClick={() => setAllGroupedSize(cat.id, sizeName)}
+                              className="px-2 py-1 text-[10px] sm:text-xs font-bold rounded-md bg-emerald-50 text-emerald-600 border border-emerald-200 hover:bg-emerald-600 hover:text-white transition-colors"
+                            >
+                              {sizeName}
+                            </button>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {cat.type === 'flat' && (
+                    <button
+                      type="button"
+                      onClick={() => selectAllFlatItems(cat.id)}
+                      className="px-3 py-1.5 text-xs font-bold rounded-lg bg-blue-50 text-blue-600 border border-blue-200 hover:bg-blue-600 hover:text-white transition-colors whitespace-nowrap"
+                    >
+                      {(selectedItemsMap[cat.id] || []).length === cat.items.filter(i => !i.forGender || i.forGender === 'Semua' || i.forGender === formData.gender).length
+                        ? 'Batal Pilih Semua'
+                        : 'Pilih Semua Item'}
+                    </button>
+                  )}
+                </div>
+
+                <span className="text-sm font-bold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-100 self-start sm:self-auto shrink-0">
                   Rp {(selectedItemsMap[cat.id] || []).reduce((sum, item) => sum + (item.price || 0), 0).toLocaleString('id-ID')}
                 </span>
-              </h2>
+              </div>
 
               {cat.type === 'grouped' ? (
                 // Grouped Render (Like Uniforms)
@@ -412,10 +495,10 @@ export default function OrderForm() {
                       else if (opt.val === 'none') { setDiscount(0); }
                     }}
                     className={`px-3 py-1.5 text-xs font-bold rounded-lg border-2 transition-all ${studentBenefitStatus === opt.val
-                        ? opt.val === 'none' ? 'bg-slate-200 border-slate-400 text-slate-800'
-                          : opt.val === 'yatim' ? 'bg-emerald-600 border-emerald-600 text-white shadow-md'
-                            : 'bg-blue-600 border-blue-600 text-white shadow-md'
-                        : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300'
+                      ? opt.val === 'none' ? 'bg-slate-200 border-slate-400 text-slate-800'
+                        : opt.val === 'yatim' ? 'bg-emerald-600 border-emerald-600 text-white shadow-md'
+                          : 'bg-blue-600 border-blue-600 text-white shadow-md'
+                      : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300'
                       }`}
                   >
                     {opt.label}
