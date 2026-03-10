@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useOrders } from '../context/OrderContext';
 import { useMasterData } from '../context/MasterDataContext';
-import { Printer, Search, FileText, Edit, Trash2, MessageSquare } from 'lucide-react';
+import { Printer, Search, FileText, Edit, Trash2, MessageSquare, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 import { generateInvoicePDF } from '../utils/PdfGenerator';
 import { uploadAndGetWhatsAppLink } from '../utils/WhatsAppUtils';
 
@@ -11,6 +11,7 @@ export default function Dashboard() {
   const { categories: masterCategories } = useMasterData();
   const [searchTerm, setSearchTerm] = useState('');
   const [isProcessingWA, setIsProcessingWA] = useState(null); // ID of order being processed
+  const [sortConfig, setSortConfig] = useState({ key: 'createdAt', direction: 'desc' });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,11 +19,70 @@ export default function Dashboard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const filteredOrders = orders.filter(
-    order =>
-      order.studentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.guardianName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredOrders = useMemo(() => {
+    let result = orders.filter(
+      order =>
+        order.studentName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        order.guardianName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        order.status?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    if (sortConfig.key) {
+      result.sort((a, b) => {
+        let valA, valB;
+
+        switch (sortConfig.key) {
+          case 'createdAt':
+            valA = a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
+            valB = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
+            break;
+          case 'studentName':
+            valA = a.studentName?.toLowerCase() || '';
+            valB = b.studentName?.toLowerCase() || '';
+            break;
+          case 'guardianName':
+            valA = a.guardianName?.toLowerCase() || '';
+            valB = b.guardianName?.toLowerCase() || '';
+            break;
+          case 'grandTotal':
+            valA = a.grandTotal || 0;
+            valB = b.grandTotal || 0;
+            break;
+          case 'remaining':
+            valA = a.remaining || 0;
+            valB = b.remaining || 0;
+            break;
+          case 'status':
+            valA = a.status || '';
+            valB = b.status || '';
+            break;
+          default:
+            valA = a[sortConfig.key];
+            valB = b[sortConfig.key];
+        }
+
+        if (valA < valB) return sortConfig.direction === 'asc' ? -1 : 1;
+        if (valA > valB) return sortConfig.direction === 'asc' ? 1 : -1;
+        return 0;
+      });
+    }
+    return result;
+  }, [orders, searchTerm, sortConfig]);
+
+  const handleSort = (key) => {
+    let direction = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const getSortIcon = (key) => {
+    if (sortConfig.key !== key) return <ArrowUpDown className="w-3 h-3 text-slate-300 ml-1 inline-block" />;
+    return sortConfig.direction === 'asc'
+      ? <ArrowUp className="w-3 h-3 text-emerald-500 ml-1 inline-block" />
+      : <ArrowDown className="w-3 h-3 text-emerald-500 ml-1 inline-block" />;
+  };
 
   const handlePrint = (order) => {
     generateInvoicePDF(order, true, masterCategories);
@@ -112,11 +172,33 @@ export default function Dashboard() {
             <input
               type="text"
               className="focus:ring-emerald-500 focus:border-emerald-500 block w-full pl-10 sm:text-sm border-slate-300 rounded-md py-2 px-3 border transition-colors shadow-sm"
-              placeholder="Cari nama siswa / wali..."
+              placeholder="Cari nama / wali / status..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
+        </div>
+      </div>
+
+      {/* Summary Stats */}
+      <div className="mb-6 grid grid-cols-3 gap-3 md:gap-4">
+        <div className="bg-white shadow-sm border border-slate-200 p-3 md:p-4 rounded-xl flex flex-col items-center justify-center">
+          <span className="text-[10px] md:text-sm font-bold text-slate-500 mb-1 uppercase tracking-wider text-center">Total Pesanan</span>
+          <span className="text-2xl md:text-3xl font-black text-slate-800">{filteredOrders.length}</span>
+        </div>
+        <div className="bg-white shadow-sm border border-blue-200 p-3 md:p-4 rounded-xl flex flex-col items-center justify-center relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-16 h-16 bg-blue-50 rounded-bl-full outline-none"></div>
+          <span className="text-[10px] md:text-sm font-bold text-blue-600 mb-1 uppercase tracking-wider z-10 text-center">Putra</span>
+          <span className="text-2xl md:text-3xl font-black text-blue-700 z-10">
+            {filteredOrders.filter(o => o.gender === 'Putra').length}
+          </span>
+        </div>
+        <div className="bg-white shadow-sm border border-pink-200 p-3 md:p-4 rounded-xl flex flex-col items-center justify-center relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-16 h-16 bg-pink-50 rounded-bl-full outline-none"></div>
+          <span className="text-[10px] md:text-sm font-bold text-pink-600 mb-1 uppercase tracking-wider z-10 text-center">Putri</span>
+          <span className="text-2xl md:text-3xl font-black text-pink-700 z-10">
+            {filteredOrders.filter(o => o.gender === 'Putri').length}
+          </span>
         </div>
       </div>
 
@@ -131,15 +213,20 @@ export default function Dashboard() {
             Tidak ada data pesanan.
           </div>
         ) : (
-          filteredOrders.map((order) => (
+          filteredOrders.map((order, index) => (
             <div key={order.id} className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-              <div className="flex justify-between items-start">
-                <div>
-                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">Siswa</div>
-                  <div className="text-lg font-black text-slate-900 leading-tight">{order.studentName}</div>
-                  <div className="flex flex-wrap items-center gap-2 mt-1">
-                    <div className="text-sm font-medium text-slate-500">{order.gender} • {order.createdAt?.toDate().toLocaleDateString('id-ID')}</div>
-                    {getBenefitBadge(order)}
+              <div className="flex justify-between items-start gap-2">
+                <div className="flex gap-3 sm:gap-4 items-start">
+                  <div className="bg-slate-100 border border-slate-200 text-slate-600 text-sm font-black rounded-full w-8 h-8 flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
+                    {index + 1}
+                  </div>
+                  <div>
+                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Siswa</div>
+                    <div className="text-lg font-black text-slate-900 leading-tight">{order.studentName}</div>
+                    <div className="flex flex-wrap items-center gap-2 mt-1">
+                      <div className="text-sm font-medium text-slate-500">{order.gender} • {order.createdAt?.toDate().toLocaleDateString('id-ID')}</div>
+                      {getBenefitBadge(order)}
+                    </div>
                   </div>
                 </div>
                 <div>{getStatusBadge(order.status)}</div>
@@ -204,25 +291,52 @@ export default function Dashboard() {
               <table className="min-w-full divide-y divide-slate-200">
                 <thead className="bg-slate-50">
                   <tr>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                      Tanggal
+                    <th scope="col" className="px-6 py-3 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider w-12 cursor-default select-none">
+                      No
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                      Siswa
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:bg-slate-100 transition-colors select-none group"
+                      onClick={() => handleSort('createdAt')}
+                    >
+                      Tanggal {getSortIcon('createdAt')}
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                      Wali / Alamat
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:bg-slate-100 transition-colors select-none group"
+                      onClick={() => handleSort('studentName')}
+                    >
+                      Siswa {getSortIcon('studentName')}
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                      Total
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:bg-slate-100 transition-colors select-none group"
+                      onClick={() => handleSort('guardianName')}
+                    >
+                      Wali / Alamat {getSortIcon('guardianName')}
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                      Sisa Tagihan
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:bg-slate-100 transition-colors select-none group"
+                      onClick={() => handleSort('grandTotal')}
+                    >
+                      Total {getSortIcon('grandTotal')}
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                      Status
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:bg-slate-100 transition-colors select-none group"
+                      onClick={() => handleSort('remaining')}
+                    >
+                      Sisa Tagihan {getSortIcon('remaining')}
                     </th>
-                    <th scope="col" className="relative px-6 py-3">
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:bg-slate-100 transition-colors select-none group"
+                      onClick={() => handleSort('status')}
+                    >
+                      Status {getSortIcon('status')}
+                    </th>
+                    <th scope="col" className="relative px-6 py-3 text-right">
                       <span className="sr-only">Aksi</span>
                     </th>
                   </tr>
@@ -230,13 +344,13 @@ export default function Dashboard() {
                 <tbody className="bg-white divide-y divide-slate-200">
                   {loadingOrders ? (
                     <tr>
-                      <td colSpan="7" className="px-6 py-8 text-center text-sm text-slate-500">
+                      <td colSpan="8" className="px-6 py-8 text-center text-sm text-slate-500">
                         Memuat data pesanan...
                       </td>
                     </tr>
                   ) : filteredOrders.length === 0 ? (
                     <tr>
-                      <td colSpan="7" className="px-6 py-8 text-center text-sm text-slate-500">
+                      <td colSpan="8" className="px-6 py-8 text-center text-sm text-slate-500">
                         <div className="flex flex-col items-center justify-center space-y-2">
                           <FileText className="w-8 h-8 text-slate-300" />
                           <p>Tidak ada data pesanan yang ditemukan.</p>
@@ -244,8 +358,11 @@ export default function Dashboard() {
                       </td>
                     </tr>
                   ) : (
-                    filteredOrders.map((order) => (
+                    filteredOrders.map((order, index) => (
                       <tr key={order.id} className="hover:bg-slate-50 transition-colors">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-slate-500 text-center">
+                          {index + 1}
+                        </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-slate-600">{order.createdAt ? order.createdAt.toDate().toLocaleDateString('id-ID') : '-'}</div>
                           {order.createdBy && (
