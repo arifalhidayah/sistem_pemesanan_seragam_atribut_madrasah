@@ -20,6 +20,13 @@ Aplikasi manajemen pemesanan seragam dan atribut sekolah berbasis web yang moder
     - Laporan Keuangan (Omzet, Piutang, Target).
     - Nota Produksi untuk Penjahit (Rekap ukuran per gender).
     - Rekap khusus jumlah pesanan Jilbab.
+- **Dashboard Pesanan Pintar**:
+    - Fitur *Sorting* (Pengurutan) berdasarkan nama, tanggal, maupun sisa tagihan.
+    - Pencarian pintar yang mencakup pencarian nama siswa, wali, hingga status pelunasan.
+    - Ringkasan statistik (total pesanan berdasar Putra dan Putri).
+- **Formulir Cepat (Bulk Selection)**:
+    - Tombol pilih ukuran sekalgus (*one-click*) untuk semua seragam.
+    - Tombol pilih/batalkan semua item sekaligus untuk perlengkapan sekolah & atribut.
 - **Autentikasi & Profil**:
     - Keamanan data dengan Firebase Authentication.
     - **Menu Profil**: Admin dapat mengatur nama tampilan asli yang akan tercetak otomatis di kuitansi PDF.
